@@ -121,7 +121,7 @@ pxe_dust.each do |id|
     elsif arch.eql?("amd64")
       release = "ubuntu-10.04-x86_64"
     end
-  when "11.04","11.10"
+  when "11.04","11.10","12.04"
     platform = "ubuntu"
     if arch.eql?("i386")
       release = "ubuntu-11.04-i686"

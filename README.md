@@ -12,7 +12,7 @@ Requires Chef 0.10.0+.
 
 Tested on:
 
-* Ubuntu 10.04-11.10
+* Ubuntu 10.04-12.04
 * Debian 6.0
 
 ## Cookbooks:
@@ -37,7 +37,7 @@ Here is an example of the default.json:
 {
     "id": "default",
     "arch": "amd64",
-    "version": "10.04",
+    "version": "12.04",
     },
     "user": {
         "fullname": "Ubuntu",

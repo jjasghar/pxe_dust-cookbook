@@ -1,0 +1,10 @@
+{
+    "id": "ubuntu-precise-i386",
+    "arch": "i386",
+    "version": "12.04",
+    "netboot_url": "http://archive.ubuntu.com/ubuntu/dists/precise/main/installer-i386/current/images/netboot/netboot.tar.gz",
+    "run_list": "role[base]",
+    "addresses": {
+        "00:21:70:ce:17:4f": "hypnotoad"
+    }
+}
