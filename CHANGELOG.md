@@ -1,3 +1,6 @@
+## 1.2.5:
+* support multiple items in the run list from the data bag
+
 ## 1.2.4:
 * take default run_lists when none-specified
 * clean up installer when finished
