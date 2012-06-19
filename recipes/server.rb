@@ -65,7 +65,7 @@ pxe_dust.each do |id|
   domain = image['domain'] || default['domain']
   version = image['version'] || default['version']
   netboot_url = image['netboot_url'] || default['netboot_url']
-  run_list = image['run_list']
+  run_list = image['run_list'] || default['run_list']
   if image['user']
     user_fullname = image['user']['fullname']
     user_username = image['user']['username']
