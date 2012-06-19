@@ -21,7 +21,7 @@ EOF
 
 cat > /etc/chef/first-boot.json <<EOF
 {
-<% if @run_list %>"run_list": [ "<%= @run_list %>" ]<% end %>
+<% if @run_list %>"run_list": [ <%= @run_list.to_s %> ]<% end %>
 }
 EOF
 

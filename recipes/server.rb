@@ -65,7 +65,8 @@ pxe_dust.each do |id|
   domain = image['domain'] || default['domain']
   version = image['version'] || default['version']
   netboot_url = image['netboot_url'] || default['netboot_url']
-  run_list = image['run_list'] || default['run_list']
+  run_list = image['run_list'] || default['run_list'] || ''
+  rlist = run_list.split(',') #for supporting multiple items
   if image['user']
     user_fullname = image['user']['fullname']
     user_username = image['user']['username']
@@ -188,7 +189,7 @@ pxe_dust.each do |id|
       :http_proxy_user => http_proxy_user,
       :http_proxy_pass => http_proxy_pass,
       :https_proxy => https_proxy,
-      :run_list => run_list
+      :run_list => rlist
       )
     action :create
   end

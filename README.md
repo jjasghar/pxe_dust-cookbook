@@ -50,9 +50,9 @@ Here is an example of the default.json:
 Here are currently supported options available for inclusion in the `default.json`.:
 
 * `arch`: Architecture of the netboot.tar.gz to use as the source of pxeboot images, default is 'amd64'.
-* `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '10.04'.
+* `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '12.04'.
 * `domain`: Default domain for nodes, default is none.
-* `run_list`: Run list for nodes, this value is NOT set as a default and must be explicitly set for all boot types.
+* `run_list`: Run list for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
 * `netboot_url`: URL of the netboot image to use for OS installation.
 * `bootstrap`: Optional additional bootstrapping configuration.
     `http_proxy`: HTTP proxy, default is none.
