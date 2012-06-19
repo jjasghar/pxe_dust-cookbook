@@ -37,6 +37,12 @@ directory "/var/www/opscode-full-stack" do
   mode "0755"
 end
 
+# remove existing install.sh if installlatest is true
+file "/var/www/opscode-full-stack/install.sh" do
+  only_if { node['pxe_dust']['installlatest'] }
+  action :delete
+end
+
 #for getting latest version of full stack installers
 remote_file "/var/www/opscode-full-stack/install.sh" do
   source "http://opscode.com/chef/install.sh"

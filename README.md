@@ -6,7 +6,7 @@ Configures a tftpd server for serving Ubuntu installers over PXE and setting the
 Requirements
 ============
 
-Requires Chef 0.10.0+.
+Requires Chef 10.12 or later since it now uses the full-chef installer.
 
 ## Platform:
 
@@ -131,6 +131,13 @@ Side note, for DD-WRT bootp support [this forum post was followed](http://www.dd
     dhcp-boot=pxelinux.0,,192.168.1.147
 
 in the section `Additional DNSMasq Options` where the IP address is that of the tftpd server we're configuring here and pxelinux.0 is from the netboot tarball.
+
+Attributes
+==========
+
+`node['pxe_dust']['chefversion]` the Chef version that pxe_dust is currently serving up
+
+`node['pxe_dust']['installlatest']` always refresh and use the latest chef installer available, defaults to `true`
 
 License and Author
 ==================

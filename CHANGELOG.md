@@ -1,3 +1,6 @@
+## 1.2.3:
+* added attribute for always pulling latest Chef installer
+
 ## 1.2.2:
 * COOK-1369 Ubuntu 12.04 Precise Pangolin support
 
