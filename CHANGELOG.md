@@ -1,3 +1,7 @@
+## 1.2.4:
+* take default run_lists when none-specified
+* clean up installer when finished
+
 ## 1.2.3:
 * added attribute for always pulling latest Chef installer
 
