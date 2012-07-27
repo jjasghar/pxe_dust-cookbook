@@ -122,25 +122,13 @@ pxe_dust.each do |id|
   case version
   when "10.04","10.10"
     platform = "ubuntu"
-    if arch.eql?("i386")
-      release = "ubuntu-10.04-i686"
-    elsif arch.eql?("amd64")
-      release = "ubuntu-10.04-x86_64"
-    end
+    release = "ubuntu-10.04-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
   when "11.04","11.10","12.04"
     platform = "ubuntu"
-    if arch.eql?("i386")
-      release = "ubuntu-11.04-i686"
-    elsif arch.eql?("amd64")
-      release = "ubuntu-11.04-x86_64"
-    end
+    release = "ubuntu-11.04-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
   when "6.0.4"
-    platform = "debian"
-    if arch.eql?("i386")
-      release = "debian-6.0.1-i686"
-    elsif arch.eql?("amd64")
-      release = "debian-6.0.1-x86_64"
-    end
+    platform = "debian"  
+    release = "debian-6.0.1-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
   end
 
   directory "/var/www/opscode-full-stack/#{release}" do
