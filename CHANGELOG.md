@@ -1,5 +1,7 @@
-## 1.2.5:
+## 1.2.6:
+* COOK-1502: pxe_dust has some if statements that could that could be reduced
 * support multiple items in the run list from the data bag
+* switch from eth0 to auto for pxelinux.cfg
 
 ## 1.2.4:
 * take default run_lists when none-specified
