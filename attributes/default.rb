@@ -18,5 +18,5 @@
 # limitations under the License.
 #
 
-default[:pxe_dust][:chefversion] = "10.12.0_1"
+default[:pxe_dust][:chefversion] = "10.12.0-1"
 default[:pxe_dust][:installlatest] = true
