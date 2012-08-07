@@ -103,6 +103,8 @@ pxe_dust.each do |id|
     action :create_if_missing
   end
 
+  #this won't recreate a deleted /var/lib/tftpboot directory
+  #probably need to smarten up trigger, or always run it
   execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
     cwd image_dir
     subscribes :run, resources(:remote_file => "/var/www/#{id}-netboot.tar.gz"), :immediately
@@ -123,13 +125,13 @@ pxe_dust.each do |id|
   case version
   when "10.04","10.10"
     platform = "ubuntu"
-    release = "ubuntu-10.04-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
+    release = "ubuntu-10.04-#{arch =~ /i386/ ? "i686" : "x86_64"}"
   when "11.04","11.10","12.04"
     platform = "ubuntu"
-    release = "ubuntu-11.04-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
+    release = "ubuntu-11.04-#{arch =~ /i386/ ? "i686" : "x86_64"}"
   when "6.0.4"
-    platform = "debian"  
-    release = "debian-6.0.1-#{arch =~ /x86_64/ ? "amd64" : "i686"}"
+    platform = "debian"
+    release = "debian-6.0.1-#{arch =~ /i386/ ? "i686" : "x86_64"}"
   end
 
   directory "/var/www/opscode-full-stack/#{release}" do
@@ -145,6 +147,9 @@ pxe_dust.each do |id|
     action :create_if_missing
   end
 
+  #hostname for unmatched nodes?
+  #what if hostname doesn't match dhcp?
+
   mac_addresses.each do |mac_address|
     mac = mac_address.gsub(/:/, '-')
     mac.downcase!
@@ -155,13 +160,12 @@ pxe_dust.each do |id|
         :platform => platform,
         :id => id,
         :arch => arch,
-        :domain => domain
+        :domain => domain,
+        :hostname => image['addresses'][mac_address]
         )
       action :create
     end
   end
-
-
 
   template "/var/www/#{id}-preseed.cfg" do
     source "#{platform}-preseed.cfg.erb"
@@ -208,7 +212,8 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     :platform => default['platform'],
     :id => 'default',
     :arch => default['arch'],
-    :domain => default['domain']
+    :domain => default['domain'],
+    :hostname => 'unknown'
     )
   action :create
 end
