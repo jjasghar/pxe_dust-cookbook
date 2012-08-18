@@ -38,7 +38,6 @@ Here is an example of the default.json:
     "id": "default",
     "arch": "amd64",
     "version": "12.04",
-    },
     "user": {
         "fullname": "Ubuntu",
         "username": "ubuntu",
