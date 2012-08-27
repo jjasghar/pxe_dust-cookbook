@@ -70,6 +70,7 @@ pxe_dust.each do |id|
   domain = image['domain'] || default['domain']
   version = image['version'] || default['version']
   netboot_url = image['netboot_url'] || default['netboot_url']
+  packages = image['packages'] || default['packages'] || ''
   run_list = image['run_list'] || default['run_list'] || ''
   rlist = run_list.split(',') #for supporting multiple items
   if image['user']
@@ -178,6 +179,7 @@ pxe_dust.each do |id|
     variables(
       :id => id,
       :proxy => proxy,
+      :packages => packages,
       :user_fullname => user_fullname,
       :user_username => user_username,
       :user_crypted_password => user_crypted_password,
@@ -185,7 +187,6 @@ pxe_dust.each do |id|
       )
     action :create
   end
-
 
   #Chef bootstrap script run by new installs
   template "/var/www/#{id}-chef-bootstrap" do
