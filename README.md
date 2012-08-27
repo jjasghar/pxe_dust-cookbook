@@ -51,6 +51,7 @@ Here are currently supported options available for inclusion in the `default.jso
 * `arch`: Architecture of the netboot.tar.gz to use as the source of pxeboot images, default is 'amd64'.
 * `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '12.04'.
 * `domain`: Default domain for nodes, default is none.
+* `packages`: Additional operating system packages to add to the preseed file.
 * `run_list`: Run list for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
 * `netboot_url`: URL of the netboot image to use for OS installation.
 * `bootstrap`: Optional additional bootstrapping configuration.
@@ -83,7 +84,7 @@ Sets the URL to the preseed file, architecture, the domain and which interfaces 
 preseed.cfg.erb
 ---------------
 
-The preseed file is full of opinions, you will want to update this. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured. The preseed finishes by calling the `chef-bootstrap` script.
+The preseed file is full of opinions, you will want to update this. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured and any additional required packages may be added to the `pxe_dust` data bag items. The preseed finishes by calling the `chef-bootstrap` script.
 
 chef-bootstrap.sh.erb
 ---------------------

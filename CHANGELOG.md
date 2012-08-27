@@ -4,6 +4,7 @@
 * Updating default chef version (Austin Page)
 * support multiple items in the run list from the data bag
 * switch from eth0 to auto for pxelinux.cfg
+* take an optional list of packages to install
 
 ## 1.2.4:
 * take default run_lists when none-specified
