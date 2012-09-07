@@ -18,5 +18,4 @@
 # limitations under the License.
 #
 
-default['pxe_dust']['chefversion'] = "10.12.0-1"
-default['pxe_dust']['installlatest'] = true
+default['pxe_dust']['chefversion'] = nil

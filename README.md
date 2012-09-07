@@ -136,9 +136,7 @@ in the section `Additional DNSMasq Options` where the IP address is that of the 
 Attributes
 ==========
 
-`node['pxe_dust']['chefversion]` the Chef version that pxe_dust is currently serving up
-
-`node['pxe_dust']['installlatest']` always refresh and use the latest chef installer available, defaults to `true`
+`node['pxe_dust']['chefversion]` the Chef version that pxe_dust should provide, unset by default which downloads latest
 
 License and Author
 ==================
