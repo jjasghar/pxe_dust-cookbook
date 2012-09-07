@@ -73,6 +73,9 @@ pxe_dust.each do |id|
   packages = image['packages'] || default['packages'] || ''
   run_list = image['run_list'] || default['run_list'] || ''
   rlist = run_list.split(',') #for supporting multiple items
+  external_preseed = image['external_preseed'] || nil
+  preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
+
   if image['user']
     user_fullname = image['user']['fullname']
     user_username = image['user']['username']
@@ -167,25 +170,28 @@ pxe_dust.each do |id|
         :id => id,
         :arch => arch,
         :domain => domain,
-        :hostname => image['addresses'][mac_address]
-        )
+        :hostname => image['addresses'][mac_address],
+        :preseed => preseed
+	)
       action :create
     end
   end
 
-  template "/var/www/#{id}-preseed.cfg" do
-    source "#{platform}-preseed.cfg.erb"
-    mode "0644"
-    variables(
-      :id => id,
-      :proxy => proxy,
-      :packages => packages,
-      :user_fullname => user_fullname,
-      :user_username => user_username,
-      :user_crypted_password => user_crypted_password,
-      :root_crypted_password => root_crypted_password
-      )
-    action :create
+  unless external_preseed.nil?
+    template "/var/www/#{id}-preseed.cfg" do
+      source "#{platform}-preseed.cfg.erb"
+      mode "0644"
+      variables(
+        :id => id,
+        :proxy => proxy,
+        :packages => packages,
+        :user_fullname => user_fullname,
+        :user_username => user_username,
+        :user_crypted_password => user_crypted_password,
+        :root_crypted_password => root_crypted_password
+        )
+      action :create
+    end
   end
 
   #Chef bootstrap script run by new installs
@@ -219,7 +225,8 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     :id => 'default',
     :arch => default['arch'],
     :domain => default['domain'],
-    :hostname => 'unknown'
+    :hostname => 'unknown',
+    :preseed => default['external_preseed'] || "default-preseed.cfg" 
     )
   action :create
 end
