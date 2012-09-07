@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+require 'net/http'
+
 include_recipe "apache2"
 include_recipe "tftp::server"
 
@@ -42,24 +44,6 @@ directory "/var/www/opscode-full-stack" do
   mode "0755"
 end
 
-# remove existing install.sh if installlatest is true
-file "/var/www/opscode-full-stack/install.sh" do
-  only_if { node['pxe_dust']['installlatest'] }
-  action :delete
-end
-
-#for getting latest version of full stack installers
-remote_file "/var/www/opscode-full-stack/install.sh" do
-  source "http://opscode.com/chef/install.sh"
-end
-ruby_block "chef version" do
-  block do
-    cmd = Chef::ShellOut.new("grep release_version /var/www/opscode-full-stack/install.sh")
-    output = cmd.run_command
-    node['pxe_dust']['chefversion'] = output.stdout.split('"')[1]
-  end
-end
-
 #loop over the other data bag items here
 pxe_dust = data_bag('pxe_dust')
 default = data_bag_item('pxe_dust', 'default')
@@ -73,6 +57,9 @@ pxe_dust.each do |id|
   packages = image['packages'] || default['packages'] || ''
   run_list = image['run_list'] || default['run_list'] || ''
   rlist = run_list.split(',') #for supporting multiple items
+  external_preseed = image['external_preseed'] || nil
+  preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
+
   if image['user']
     user_fullname = image['user']['fullname']
     user_username = image['user']['username']
@@ -131,30 +118,43 @@ pxe_dust.each do |id|
   case version
   when "10.04","10.10"
     platform = "ubuntu"
-    release = "ubuntu-10.04-#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    release = "ubuntu-10.04-#{rel_arch}"
   when "11.04","11.10","12.04"
     platform = "ubuntu"
-    release = "ubuntu-11.04-#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    release = "ubuntu-11.04-#{rel_arch}"
   when "6.0.4"
     platform = "debian"
-    release = "debian-6.0.1-#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    version = "6"
+    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    release = "debian-6.0.1-#{rel_arch}"
   end
 
   directory "/var/www/opscode-full-stack/#{release}" do
     mode "0755"
   end
 
-  installer = "chef-full_#{node['pxe_dust']['chefversion']}_#{arch}.deb"
+  installer = ""
+  location = ""
+
+  #for getting latest version of full stack installers
+  Net::HTTP.start('www.opscode.com') do |http|
+    Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
+    response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
+    Chef::Log.debug("Code = #{response.code}")
+    location = response['location']
+    Chef::Log.info("Omnitruck URL: #{location}")
+    installer = location.split('/').last
+    Chef::Log.debug("Omnitruck installer: #{installer}")
+  end
 
   #download the full stack installer
   remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
-    source "http://s3.amazonaws.com/opscode-full-stack/#{release}/#{installer}"
+    source location
     mode "0644"
     action :create_if_missing
   end
-
-  #hostname for unmatched nodes?
-  #what if hostname doesn't match dhcp?
 
   mac_addresses.each do |mac_address|
     mac = mac_address.gsub(/:/, '-')
@@ -167,25 +167,28 @@ pxe_dust.each do |id|
         :id => id,
         :arch => arch,
         :domain => domain,
-        :hostname => image['addresses'][mac_address]
+        :hostname => image['addresses'][mac_address],
+        :preseed => preseed
         )
       action :create
     end
   end
 
-  template "/var/www/#{id}-preseed.cfg" do
-    source "#{platform}-preseed.cfg.erb"
-    mode "0644"
-    variables(
-      :id => id,
-      :proxy => proxy,
-      :packages => packages,
-      :user_fullname => user_fullname,
-      :user_username => user_username,
-      :user_crypted_password => user_crypted_password,
-      :root_crypted_password => root_crypted_password
-      )
-    action :create
+  if external_preseed.nil?
+    template "/var/www/#{id}-preseed.cfg" do
+      source "#{platform}-preseed.cfg.erb"
+      mode "0644"
+      variables(
+        :id => id,
+        :proxy => proxy,
+        :packages => packages,
+        :user_fullname => user_fullname,
+        :user_username => user_username,
+        :user_crypted_password => user_crypted_password,
+        :root_crypted_password => root_crypted_password
+        )
+      action :create
+    end
   end
 
   #Chef bootstrap script run by new installs
@@ -219,7 +222,8 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     :id => 'default',
     :arch => default['arch'],
     :domain => default['domain'],
-    :hostname => 'unknown'
+    :hostname => 'unknown',
+    :preseed => default['external_preseed'] || "default-preseed.cfg"
     )
   action :create
 end

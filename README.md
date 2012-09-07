@@ -65,6 +65,7 @@ Here are currently supported options available for inclusion in the `default.jso
     `username`: Username of the default user, default 'ubuntu'.
 * `root`:
     `crypted_password`: SHA512 password for the root user, default 'password'. This is used on Debian since Ubuntu does not have a root.
+* `external_preseed`: Direct pxeboot clients to an existing (unmanaged by pxe_dust) preseed file.
 
 Additional data bag items may be used to support booting multiple operating systems. Examples of various Ubuntu and Debian installations are included in the `examples` directory. Important to note is the use of the `addresses` option to support tftp booting by MAC address (this is currently required for not using the default) and the explicit need for a `run_list` if one is to be provided.
 
@@ -135,9 +136,7 @@ in the section `Additional DNSMasq Options` where the IP address is that of the 
 Attributes
 ==========
 
-`node['pxe_dust']['chefversion]` the Chef version that pxe_dust is currently serving up
-
-`node['pxe_dust']['installlatest']` always refresh and use the latest chef installer available, defaults to `true`
+`node['pxe_dust']['chefversion]` the Chef version that pxe_dust should provide, unset by default which downloads latest
 
 License and Author
 ==================

@@ -1,3 +1,7 @@
+## 1.3.0:
+* COOK-1621: support unmanaged preseed files (Craig Tracey)
+* support new Omnitruck downloads for the Omnibus installer
+
 ## 1.2.6:
 * COOK-1502: pxe_dust has some if statements that could that could be reduced (Scott M. Likens)
 * Changing the addresses databag items to have the hostname as their value (Austin Page)
