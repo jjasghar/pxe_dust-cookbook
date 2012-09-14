@@ -49,6 +49,7 @@ Here is an example of the default.json:
 Here are currently supported options available for inclusion in the `default.json`.:
 
 * `arch`: Architecture of the netboot.tar.gz to use as the source of pxeboot images, default is 'amd64'.
+* `interface`: Which interface to install from, default is 'auto'.
 * `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '12.04'.
 * `domain`: Default domain for nodes, default is none.
 * `packages`: Additional operating system packages to add to the preseed file.

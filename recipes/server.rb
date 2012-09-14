@@ -50,6 +50,7 @@ default = data_bag_item('pxe_dust', 'default')
 pxe_dust.each do |id|
   image = data_bag_item('pxe_dust', id)
   image_dir = "#{node['tftp']['directory']}/#{id}"
+  interface = image['interface'] || default['interface'] || 'auto'
   arch = image['arch'] || default['arch']
   domain = image['domain'] || default['domain']
   version = image['version'] || default['version']
@@ -165,6 +166,7 @@ pxe_dust.each do |id|
       variables(
         :platform => platform,
         :id => id,
+        :interface => interface,
         :arch => arch,
         :domain => domain,
         :hostname => image['addresses'][mac_address],
@@ -220,6 +222,7 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
   variables(
     :platform => default['platform'],
     :id => 'default',
+    :interface => default['interface'] || 'auto',
     :arch => default['arch'],
     :domain => default['domain'],
     :hostname => 'unknown',

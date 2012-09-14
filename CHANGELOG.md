@@ -1,3 +1,6 @@
+## 1.3.2
+* support OS installation off of network interface besides eth0
+
 ## 1.3.0:
 * COOK-1621: support unmanaged preseed files (Craig Tracey)
 * support new Omnitruck downloads for the Omnibus installer
