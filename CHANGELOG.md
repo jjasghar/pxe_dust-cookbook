@@ -1,4 +1,5 @@
 ## 1.3.2
+* added ability to set the environment for nodes
 * support OS installation off of network interface besides eth0
 
 ## 1.3.0:

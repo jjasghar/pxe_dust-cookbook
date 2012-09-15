@@ -54,6 +54,7 @@ Here are currently supported options available for inclusion in the `default.jso
 * `domain`: Default domain for nodes, default is none.
 * `packages`: Additional operating system packages to add to the preseed file.
 * `run_list`: Run list for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
+* `environment`: Environment for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
 * `netboot_url`: URL of the netboot image to use for OS installation.
 * `bootstrap`: Optional additional bootstrapping configuration.
     `http_proxy`: HTTP proxy, default is none.
@@ -68,7 +69,7 @@ Here are currently supported options available for inclusion in the `default.jso
     `crypted_password`: SHA512 password for the root user, default 'password'. This is used on Debian since Ubuntu does not have a root.
 * `external_preseed`: Direct pxeboot clients to an existing (unmanaged by pxe_dust) preseed file.
 
-Additional data bag items may be used to support booting multiple operating systems. Examples of various Ubuntu and Debian installations are included in the `examples` directory. Important to note is the use of the `addresses` option to support tftp booting by MAC address (this is currently required for not using the default) and the explicit need for a `run_list` if one is to be provided.
+Additional data bag items may be used to support booting multiple operating systems. Examples of various Ubuntu and Debian installations are included in the `examples` directory. Important to note is the use of the `addresses` option to support tftp booting by MAC address (this is currently required for not using the default) and the explicit need for a `run_list` and/or an `environment` if one is to be provided.
 
 Templates
 =========

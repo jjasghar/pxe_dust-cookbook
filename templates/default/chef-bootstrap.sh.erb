@@ -32,6 +32,6 @@ apt-get update
 #for use with ps
 mount /proc
 
-/usr/bin/chef-client -j /etc/chef/first-boot.json
+/usr/bin/chef-client<% if @environment %> -E <%= @environment %><% end %> -j /etc/chef/first-boot.json
 
 rm /tmp/<%= @installer %>

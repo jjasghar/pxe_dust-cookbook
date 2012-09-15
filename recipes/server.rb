@@ -58,6 +58,7 @@ pxe_dust.each do |id|
   packages = image['packages'] || default['packages'] || ''
   run_list = image['run_list'] || default['run_list'] || ''
   rlist = run_list.split(',') #for supporting multiple items
+  environment = image['environment'] || default['environment']
   external_preseed = image['external_preseed'] || nil
   preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
 
@@ -204,6 +205,7 @@ pxe_dust.each do |id|
       :http_proxy_user => http_proxy_user,
       :http_proxy_pass => http_proxy_pass,
       :https_proxy => https_proxy,
+      :environment => environment,
       :run_list => rlist
       )
     action :create
