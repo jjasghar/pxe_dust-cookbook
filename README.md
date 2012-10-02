@@ -21,6 +21,8 @@ Required: apache2, tftp
 
 Optional (recommended): apt (for `recipe[apt::cacher-ng]`).
 
+DO NOT USE `chef-client::delete-validator` in conjunction with this cookbook, since it uses the validation.pem to help bootstrap new machines.
+
 pxe_dust Data Bag
 =================
 
