@@ -95,7 +95,7 @@ pxe_dust.each do |id|
   #local mirror for netboots
   remote_file "/var/www/#{id}-netboot.tar.gz" do
     source netboot_url
-    action :create
+    action :create_if_missing
   end
 
   #this won't recreate a deleted /var/lib/tftpboot directory
@@ -155,7 +155,7 @@ pxe_dust.each do |id|
   remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
     source location
     mode "0644"
-    action :create
+    action :create_if_missing
   end
 
   mac_addresses.each do |mac_address|
