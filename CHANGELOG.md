@@ -1,3 +1,7 @@
+## 1.3.4
+* switched to LVM for Ubuntu
+* use :create instead of :create_if_missing for OS install files, in case they are refreshed remotely
+
 ## 1.3.2
 * added ability to set the environment for nodes
 * support OS installation off of network interface besides eth0
