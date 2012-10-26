@@ -98,13 +98,11 @@ pxe_dust.each do |id|
     action :create_if_missing
   end
 
-  #this won't recreate a deleted /var/lib/tftpboot directory
-  #probably need to smarten up trigger, or always run it
-  #unless /var/lib/tftpboot exists??? switch to action :run?
+  #populate the netboot contents
   execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
     cwd image_dir
-    subscribes :run, resources(:remote_file => "/var/www/#{id}-netboot.tar.gz"), :immediately
-    action :nothing
+    not_if { Dir.entries(image_dir).length > 2 }
+    action :run
   end
 
   link "#{node['tftp']['directory']}/pxe-#{id}.0" do
