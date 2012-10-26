@@ -2,7 +2,7 @@
 # Cookbook Name:: pxe_dust
 # Recipe:: server
 #
-# Copyright 2011, 2012 Opscode, Inc
+# Copyright 2011-2012 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,29 +19,29 @@
 
 require 'net/http'
 
-include_recipe "apache2"
-include_recipe "tftp::server"
+include_recipe 'apache2'
+include_recipe 'tftp::server'
 
 #search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
-  Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-  proxy = "#d-i mirror/http/proxy string url"
+  Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
+  proxy = '#d-i mirror/http/proxy string url'
 else
   servers = search(:node, 'recipes:apt\:\:cacher-ng') || []
   if servers.length > 0
     proxy = "d-i mirror/http/proxy string http://#{servers[0].ipaddress}:3142"
   else
-    proxy = "#d-i mirror/http/proxy string url"
+    proxy = '#d-i mirror/http/proxy string url'
   end
 end
 
 directory "#{node['tftp']['directory']}/pxelinux.cfg" do
-  mode "0755"
+  mode '0755'
 end
 
 #location of the full stack installers
 directory "/var/www/opscode-full-stack" do
-  mode "0755"
+  mode '0755'
 end
 
 #loop over the other data bag items here
@@ -89,7 +89,7 @@ pxe_dust.each do |id|
   end
 
   directory image_dir do
-    mode "0755"
+    mode '0755'
   end
 
   #local mirror for netboots
@@ -100,6 +100,7 @@ pxe_dust.each do |id|
 
   #this won't recreate a deleted /var/lib/tftpboot directory
   #probably need to smarten up trigger, or always run it
+  #unless /var/lib/tftpboot exists??? switch to action :run?
   execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
     cwd image_dir
     subscribes :run, resources(:remote_file => "/var/www/#{id}-netboot.tar.gz"), :immediately
@@ -118,27 +119,27 @@ pxe_dust.each do |id|
 
   # only get the full stack installers in use
   case version
-  when "10.04","10.10"
-    platform = "ubuntu"
+  when '10.04', '10.10'
+    platform = 'ubuntu'
     rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
     release = "ubuntu-10.04-#{rel_arch}"
-  when "11.04","11.10","12.04"
-    platform = "ubuntu"
+  when '11.04', '11.10', '12.04'
+    platform = 'ubuntu'
     rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
     release = "ubuntu-11.04-#{rel_arch}"
-  when "6.0.4"
-    platform = "debian"
-    version = "6"
+  when '6.0.4'
+    platform = 'debian'
+    version = '6'
     rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
     release = "debian-6.0.1-#{rel_arch}"
   end
 
   directory "/var/www/opscode-full-stack/#{release}" do
-    mode "0755"
+    mode '0755'
   end
 
-  installer = ""
-  location = ""
+  installer = ''
+  location = ''
 
   #for getting latest version of full stack installers
   Net::HTTP.start('www.opscode.com') do |http|
@@ -154,7 +155,7 @@ pxe_dust.each do |id|
   #download the full stack installer
   remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
     source location
-    mode "0644"
+    mode '0644'
     action :create_if_missing
   end
 
@@ -162,8 +163,8 @@ pxe_dust.each do |id|
     mac = mac_address.gsub(/:/, '-')
     mac.downcase!
     template "#{node['tftp']['directory']}/pxelinux.cfg/01-#{mac}" do
-      source "pxelinux.cfg.erb"
-      mode "0644"
+      source 'pxelinux.cfg.erb'
+      mode '0644'
       variables(
         :platform => platform,
         :id => id,
@@ -180,7 +181,7 @@ pxe_dust.each do |id|
   if external_preseed.nil?
     template "/var/www/#{id}-preseed.cfg" do
       source "#{platform}-preseed.cfg.erb"
-      mode "0644"
+      mode '0644'
       variables(
         :id => id,
         :proxy => proxy,
@@ -196,8 +197,8 @@ pxe_dust.each do |id|
 
   #Chef bootstrap script run by new installs
   template "/var/www/#{id}-chef-bootstrap" do
-    source "chef-bootstrap.sh.erb"
-    mode "0644"
+    source 'chef-bootstrap.sh.erb'
+    mode '0644'
     variables(
       :release => release,
       :installer => installer,
@@ -215,12 +216,12 @@ end
 
 #configure the defaults
 link "#{node['tftp']['directory']}/pxelinux.0" do
-  to "default/pxelinux.0"
+  to 'default/pxelinux.0'
 end
 
 template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
-  source "pxelinux.cfg.erb"
-  mode "0644"
+  source 'pxelinux.cfg.erb'
+  mode '0644'
   variables(
     :platform => default['platform'],
     :id => 'default',
@@ -228,12 +229,12 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     :arch => default['arch'],
     :domain => default['domain'],
     :hostname => 'unknown',
-    :preseed => default['external_preseed'] || "default-preseed.cfg"
+    :preseed => default['external_preseed'] || 'default-preseed.cfg'
     )
   action :create
 end
 
 #link the validation_key where it can be downloaded
-link "/var/www/validation.pem" do
+link '/var/www/validation.pem' do
   to Chef::Config[:validation_key]
 end
