@@ -64,5 +64,5 @@ d-i finish-install/reboot_in_progress note
 # This will power off the machine instead of just halting it.
 #d-i debian-installer/exit/poweroff boolean true
 d-i preseed/late_command string in-target wget --no-proxy -O /tmp/chef-bootstrap \
-  http://<%= node[:ipaddress] %>/<%= @id %>-chef-bootstrap ;\
+  http://<%= node['ipaddress'] %>/<%= @id %>-chef-bootstrap ;\
   chroot /target /bin/bash /tmp/chef-bootstrap

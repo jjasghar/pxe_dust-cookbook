@@ -102,7 +102,6 @@ pxe_dust.each do |id|
   execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
     cwd image_dir
     not_if { Dir.entries(image_dir).length > 2 }
-    action :run
   end
 
   link "#{node['tftp']['directory']}/pxe-#{id}.0" do
@@ -119,16 +118,16 @@ pxe_dust.each do |id|
   case version
   when '10.04', '10.10'
     platform = 'ubuntu'
-    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-10.04-#{rel_arch}"
   when '11.04', '11.10', '12.04'
     platform = 'ubuntu'
-    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-11.04-#{rel_arch}"
   when '6.0.4'
     platform = 'debian'
     version = '6'
-    rel_arch = "#{arch =~ /i386/ ? "i686" : "x86_64"}"
+    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "debian-6.0.1-#{rel_arch}"
   end
 
@@ -172,25 +171,22 @@ pxe_dust.each do |id|
         :hostname => image['addresses'][mac_address],
         :preseed => preseed
         )
-      action :create
     end
   end
 
-  if external_preseed.nil?
-    template "/var/www/#{id}-preseed.cfg" do
-      source "#{platform}-preseed.cfg.erb"
-      mode '0644'
-      variables(
-        :id => id,
-        :proxy => proxy,
-        :packages => packages,
-        :user_fullname => user_fullname,
-        :user_username => user_username,
-        :user_crypted_password => user_crypted_password,
-        :root_crypted_password => root_crypted_password
-        )
-      action :create
-    end
+  template "/var/www/#{id}-preseed.cfg" do
+    only_if { external_preseed.nil? }
+    source "#{platform}-preseed.cfg.erb"
+    mode '0644'
+    variables(
+      :id => id,
+      :proxy => proxy,
+      :packages => packages,
+      :user_fullname => user_fullname,
+      :user_username => user_username,
+      :user_crypted_password => user_crypted_password,
+      :root_crypted_password => root_crypted_password
+      )
   end
 
   #Chef bootstrap script run by new installs
@@ -207,7 +203,6 @@ pxe_dust.each do |id|
       :environment => environment,
       :run_list => rlist
       )
-    action :create
   end
 
 end
@@ -229,7 +224,6 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     :hostname => 'unknown',
     :preseed => default['external_preseed'] || 'default-preseed.cfg'
     )
-  action :create
 end
 
 #link the validation_key where it can be downloaded
