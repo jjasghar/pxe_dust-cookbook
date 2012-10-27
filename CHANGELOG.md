@@ -3,6 +3,7 @@
 * Ruby syntax cleanup per https://github.com/styleguide/ruby
 * enforce pxe-booted NIC as eth0 via the pxelinux.cfg.erb and 'IPAPPEND 2'
 * added DEBCONF_DEBUG=5 for ridiculous amounts of debugging with preseed
+* foodcritic cleanups
 
 ## 1.3.2
 * added ability to set the environment for nodes

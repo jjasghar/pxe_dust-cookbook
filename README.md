@@ -76,12 +76,7 @@ Additional data bag items may be used to support booting multiple operating syst
 Templates
 =========
 
-syslinux.cfg.erb
-----------------
-
-Sets the boot prompt to automatically run the installer.
-
-txt.cfg.erb
+pxelinux.cfg.erb
 -----------
 
 Sets the URL to the preseed file, architecture, the domain and which interfaces to use.
@@ -89,7 +84,7 @@ Sets the URL to the preseed file, architecture, the domain and which interfaces 
 preseed.cfg.erb
 ---------------
 
-The preseed file is full of opinions, you will want to update this. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured and any additional required packages may be added to the `pxe_dust` data bag items. The preseed finishes by calling the `chef-bootstrap` script.
+The preseed file is full of opinions mostly exposed via attributes, you will want to update this. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured and any additional required packages may be added to the `pxe_dust` data bag items. The preseed finishes by calling the `chef-bootstrap` script.
 
 chef-bootstrap.sh.erb
 ---------------------
@@ -115,8 +110,8 @@ The recipe does the following:
 2. Untars them to the `[:tftp][:directory]` directory.
 3. Instructs the installer prompt to automatically install.
 4. Passes the URL of the preseed.cfgs to the installer.
-5. Uses the preseed.cfg template to pass in any `apt-cacher-ng` caching proxies.
-6. Downloads the proper full stack installers for the chef-client.
+5. Uses the preseed.cfg template to pass in any `apt-cacher-ng` caching proxies or other additional settings.
+6. Downloads the proper full stack installers for the chef-client and connects to the Chef server.
 
 Usage
 =====
@@ -148,7 +143,7 @@ License and Author
 Author:: Matt Ray <matt@opscode.com>
 Author:: Joshua Timberman <joshua@opscode.com>
 
-Copyright:: 2011,2012 Opscode, Inc
+Copyright:: 2011-2012 Opscode, Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
