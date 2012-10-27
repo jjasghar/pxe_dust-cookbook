@@ -1,6 +1,8 @@
 ## 1.3.4
 * switched to LVM for Ubuntu
-* use :create instead of :create_if_missing for OS install files, in case they are refreshed remotely
+* Ruby syntax cleanup per https://github.com/styleguide/ruby
+* enforce pxe-booted NIC as eth0 via the pxelinux.cfg.erb and 'IPAPPEND 2'
+* added DEBCONF_DEBUG=5 for ridiculous amounts of debugging with preseed
 
 ## 1.3.2
 * added ability to set the environment for nodes
