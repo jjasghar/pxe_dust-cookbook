@@ -50,7 +50,7 @@ default = data_bag_item('pxe_dust', 'default')
 pxe_dust.each do |id|
   image = data_bag_item('pxe_dust', id)
   image_dir = "#{node['tftp']['directory']}/#{id}"
-  interface = image['interface'] || default['interface'] || 'auto'
+  interface = image['interface'] || default['interface'] || 'eth0'
   arch = image['arch'] || default['arch']
   domain = image['domain'] || default['domain']
   version = image['version'] || default['version']
@@ -196,6 +196,7 @@ pxe_dust.each do |id|
     variables(
       :release => release,
       :installer => installer,
+      :interface => interface,
       :http_proxy => http_proxy,
       :http_proxy_user => http_proxy_user,
       :http_proxy_pass => http_proxy_pass,

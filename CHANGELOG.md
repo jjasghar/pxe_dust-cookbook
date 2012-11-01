@@ -1,7 +1,7 @@
 ## 1.3.4
 * switched to LVM for Ubuntu
 * Ruby syntax cleanup per https://github.com/styleguide/ruby
-* enforce pxe-booted NIC as eth0 via the pxelinux.cfg.erb and 'IPAPPEND 2'
+* enforce pxe-booted NIC as eth0 via the pxelinux.cfg.erb, 'IPAPPEND 2' and a udev rule in the chef-bootstrap.sh.erb
 * added DEBCONF_DEBUG=5 for ridiculous amounts of debugging with preseed
 * foodcritic cleanups
 
