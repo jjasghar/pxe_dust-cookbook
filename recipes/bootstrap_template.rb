@@ -33,10 +33,10 @@ ruby_block "capture sed output and pass to file" do
     sed = "sed 's/www.opscode.com\\/chef\\/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}/"
     sed += "#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " /var/www/opscode-full-stack/original-install.sh"
-    Chef::Log.info sed
+    Chef::Log.debug sed
     cmd = Chef::ShellOut.new(sed)
     output = cmd.run_command
-    Chef::Log.info output.stdout
+    Chef::Log.debug output.stdout
     nodeinstall = File.new("/var/www/opscode-full-stack/#{node['hostname']}-install.sh", "w+")
     nodeinstall.puts output.stdout
     nodeinstall.chmod(0644)
