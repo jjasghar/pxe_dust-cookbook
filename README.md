@@ -1,7 +1,7 @@
 Description
 ===========
 
-Configures a tftpd server for serving Ubuntu installers over PXE and setting them to run a provided preseed.cfg.
+Configures a tftpd server for serving Ubuntu installers over PXE and setting them to run a provided preseed.cfg. Builds a bootstrap template to take advantage of the locally mirrored contents.
 
 Requirements
 ============
@@ -94,24 +94,30 @@ This is the `preseed/late_command` that bootstraps the node with Chef via the fu
 Recipes
 =======
 
-Default
+default
 -------
 
 The default recipe includes recipe `pxe_dust::server`.
 
-Server
+server
 ------
 
-`recipe[pxe_dust::server]` includes the `apache2` and `tftp::server` recipes.
+`recipe[pxe_dust::server]` includes the `apache2`, `tftp::server` and `pxe_dust::bootstrap_template` recipes.
 
 The recipe does the following:
 
 1. Downloads the proper netboot.tar.gzs to boot from.
-2. Untars them to the `[:tftp][:directory]` directory.
+2. Untars them to the `['tftp']['directory']` directory.
 3. Instructs the installer prompt to automatically install.
 4. Passes the URL of the preseed.cfgs to the installer.
 5. Uses the preseed.cfg template to pass in any `apt-cacher-ng` caching proxies or other additional settings.
 6. Downloads the proper full stack installers for the chef-client and connects to the Chef server.
+
+bootstrap_template
+------------------
+
+This recipe creates a bootstrap template that creates a local copy of the `install.sh` that uses the cached full stack installers. It may be downloaded from
+`http://NODE/pxedust.erb`
 
 Usage
 =====
@@ -135,7 +141,7 @@ in the section `Additional DNSMasq Options` where the IP address is that of the 
 Attributes
 ==========
 
-`node['pxe_dust']['chefversion]` the Chef version that pxe_dust should provide, unset by default which downloads latest
+`node['pxe_dust']['chefversion']` the Chef version that pxe_dust should provide, unset by default which downloads latest
 
 License and Author
 ==================

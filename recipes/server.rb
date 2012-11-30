@@ -208,6 +208,9 @@ pxe_dust.each do |id|
 
 end
 
+#generate local mirror install.sh and bootstrap templates
+include_recipe "pxe_dust::bootstrap_template"
+
 #configure the defaults
 link "#{node['tftp']['directory']}/pxelinux.0" do
   to 'default/pxelinux.0'

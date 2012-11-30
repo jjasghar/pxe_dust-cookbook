@@ -1,3 +1,6 @@
+## 1.4.0
+* `bootstrap_template` recipe generates a local mirror bootstrap template that uses a local install.sh and local full stack installers
+
 ## 1.3.4
 * switched to LVM for Ubuntu
 * Ruby syntax cleanup per https://github.com/styleguide/ruby
