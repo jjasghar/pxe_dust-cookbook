@@ -45,10 +45,42 @@ ruby_block "capture sed output and pass to file" do
   subscribes :create, resources("remote_file[/var/www/opscode-full-stack/original-install.sh]")
 end
 
-#create an ubuntu 12.04 link
+#create ubuntu 12.04 links if 11.04 is present
+link "/var/www/opscode-full-stack/ubuntu-12.04-i686" do
+  to "/var/www/opscode-full-stack/ubuntu-11.04-i686"
+  only_if "test -f /var/www/opscode-full-stack/ubuntu-11.04-i686"
+end
 
-#create symlinks that match up with the urls
-#if multiple files that start the same, sort and symlink last
+link "/var/www/opscode-full-stack/ubuntu-12.04-x86_64" do
+  to "/var/www/opscode-full-stack/ubuntu-11.04-x86_64"
+  only_if "test -f /var/www/opscode-full-stack/ubuntu-11.04-x86_64"
+end
+
+ruby_block "create symlinks that match up with the urls" do
+  block do
+    Dir.glob("/var/www/opscode-full-stack/*").each do |distro|
+      if File.directory?(distro) && !File.symlink?(distro)
+        packages = Dir.glob("#{distro}/chef_*")
+        versions = []
+        packages.each {|x| versions << x.split('/').last.split('-')[0].split('_')[1]}
+        versions.uniq.each do |version|
+          vpackages = Dir.glob("#{distro}/chef_#{version}-*").sort
+          vpackages.each do |filename|
+            if !File.symlink?(filename)
+              lname = "#{distro}/chef_#{version}_#{filename.split('_').last}"
+              fname = "#{filename}"
+              ln = "ln -sf #{fname} #{lname}"
+              Chef::Log.info ln
+              cmd = Chef::ShellOut.new(ln)
+              output = cmd.run_command
+              Chef::Log.debug output.stdout
+            end
+          end
+        end
+      end
+    end
+  end
+end
 
 #write out a new chef-full-local.erb template
 #`http://NODE/pxedust.erb`
