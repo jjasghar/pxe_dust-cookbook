@@ -19,7 +19,33 @@
 
 require 'chef/shell_out'
 
-# download the install.sh from Opscode
+#write out a new pxedust.erb template
+remote_file "/var/www/chef-full.erb" do
+  source "https://raw.github.com/opscode/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
+end
+
+# change URL from
+# url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
+# to
+# url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
+ruby_block "template url" do
+  block do
+    sed = "sed 's/opscode.com\\/chef/"
+    sed += "#{node['hostname']}/'"
+    sed += " /var/www/chef-full.erb"
+    Chef::Log.debug sed
+    cmd = Chef::ShellOut.new(sed)
+    output = cmd.run_command
+    Chef::Log.debug output.stdout
+    nodetemplate = File.new("/var/www/#{node['hostname']}.erb", "w+")
+    nodetemplate.puts output.stdout
+    nodetemplate.chmod(0644)
+  end
+  action :nothing
+  subscribes :create, resources("remote_file[/var/www/chef-full.erb]")
+end
+
+#write out a new install.sh
 remote_file "/var/www/opscode-full-stack/original-install.sh" do
   source "http://opscode.com/chef/install.sh"
 end
@@ -28,7 +54,7 @@ end
 # url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
 # url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
-ruby_block "capture sed output and pass to file" do
+ruby_block "install.sh url" do
   block do
     sed = "sed 's/www.opscode.com\\/chef\\/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}/"
     sed += "#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
@@ -45,17 +71,7 @@ ruby_block "capture sed output and pass to file" do
   subscribes :create, resources("remote_file[/var/www/opscode-full-stack/original-install.sh]")
 end
 
-#create ubuntu 12.04 links if 11.04 is present
-link "/var/www/opscode-full-stack/ubuntu-12.04-i686" do
-  to "/var/www/opscode-full-stack/ubuntu-11.04-i686"
-  only_if "test -f /var/www/opscode-full-stack/ubuntu-11.04-i686"
-end
-
-link "/var/www/opscode-full-stack/ubuntu-12.04-x86_64" do
-  to "/var/www/opscode-full-stack/ubuntu-11.04-x86_64"
-  only_if "test -f /var/www/opscode-full-stack/ubuntu-11.04-x86_64"
-end
-
+#straighten up symlinks for downloading from install.sh
 ruby_block "create symlinks that match up with the urls" do
   block do
     Dir.glob("/var/www/opscode-full-stack/*").each do |distro|
@@ -82,5 +98,12 @@ ruby_block "create symlinks that match up with the urls" do
   end
 end
 
-#write out a new chef-full-local.erb template
-#`http://NODE/pxedust.erb`
+#create ubuntu 12.04 links if 11.04 is present
+link "/var/www/opscode-full-stack/ubuntu-12.04-i686" do
+  to "/var/www/opscode-full-stack/ubuntu-11.04-i686"
+  ignore_failure #no ubuntu?
+end
+link "/var/www/opscode-full-stack/ubuntu-12.04-x86_64" do
+  to "/var/www/opscode-full-stack/ubuntu-11.04-x86_64"
+  ignore_failure #no ubuntu?
+end
