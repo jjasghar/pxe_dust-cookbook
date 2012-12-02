@@ -19,6 +19,8 @@
 
 require 'chef/shell_out'
 
+include_recipe "pxe_dust::installers"
+
 #write out a new pxedust.erb template
 remote_file "/var/www/chef-full.erb" do
   source "https://raw.github.com/opscode/chef/master/lib/chef/knife/bootstrap/chef-full.erb"

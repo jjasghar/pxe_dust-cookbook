@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-require 'net/http'
-
 include_recipe 'apache2'
 include_recipe 'tftp::server'
 
@@ -39,11 +37,6 @@ directory "#{node['tftp']['directory']}/pxelinux.cfg" do
   mode '0755'
 end
 
-#location of the full stack installers
-directory "/var/www/opscode-full-stack" do
-  mode '0755'
-end
-
 #loop over the other data bag items here
 pxe_dust = data_bag('pxe_dust')
 default = data_bag_item('pxe_dust', 'default')
@@ -53,7 +46,6 @@ pxe_dust.each do |id|
   interface = image['interface'] || default['interface'] || 'eth0'
   arch = image['arch'] || default['arch']
   domain = image['domain'] || default['domain']
-  version = image['version'] || default['version']
   netboot_url = image['netboot_url'] || default['netboot_url']
   packages = image['packages'] || default['packages'] || ''
   run_list = image['run_list'] || default['run_list'] || ''
@@ -112,48 +104,6 @@ pxe_dust.each do |id|
     mac_addresses = image['addresses'].keys
   else
     mac_addresses = []
-  end
-
-  # only get the full stack installers in use
-  case version
-  when '10.04', '10.10'
-    platform = 'ubuntu'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
-    release = "ubuntu-10.04-#{rel_arch}"
-  when '11.04', '11.10', '12.04'
-    platform = 'ubuntu'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
-    release = "ubuntu-11.04-#{rel_arch}"
-  when '6.0.4'
-    platform = 'debian'
-    version = '6'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
-    release = "debian-6.0.1-#{rel_arch}"
-  end
-
-  directory "/var/www/opscode-full-stack/#{release}" do
-    mode '0755'
-  end
-
-  installer = ''
-  location = ''
-
-  #for getting latest version of full stack installers
-  Net::HTTP.start('www.opscode.com') do |http|
-    Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-    response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-    Chef::Log.debug("Code = #{response.code}")
-    location = response['location']
-    Chef::Log.info("Omnitruck URL: #{location}")
-    installer = location.split('/').last
-    Chef::Log.debug("Omnitruck installer: #{installer}")
-  end
-
-  #download the full stack installer
-  remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
-    source location
-    mode '0644'
-    action :create_if_missing
   end
 
   mac_addresses.each do |mac_address|
@@ -234,3 +184,7 @@ end
 link '/var/www/validation.pem' do
   to Chef::Config[:validation_key]
 end
+
+#generate local mirror install.sh and bootstrap templates
+include_recipe "pxe_dust::installers"
+include_recipe "pxe_dust::bootstrap_template"
