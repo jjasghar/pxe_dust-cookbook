@@ -32,8 +32,8 @@ end
 # url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "template url" do
   block do
-    sed = "sed 's/opscode.com\\/chef/"
-    sed += "#{node['hostname']}/'"
+    sed = "sed 's/opscode.com\\/chef\\//"
+    sed += "#{node['ipaddress']}\\/opscode-full-stack\\/#{node['hostname']}-/'"
     sed += " /var/www/chef-full.erb"
     Chef::Log.debug sed
     cmd = Chef::ShellOut.new(sed)
@@ -88,7 +88,7 @@ ruby_block "create symlinks that match up with the urls" do
               lname = "#{distro}/chef_#{version}_#{filename.split('_').last}"
               fname = "#{filename}"
               ln = "ln -sf #{fname} #{lname}"
-              Chef::Log.info ln
+              Chef::Log.debug ln
               cmd = Chef::ShellOut.new(ln)
               output = cmd.run_command
               Chef::Log.debug output.stdout
