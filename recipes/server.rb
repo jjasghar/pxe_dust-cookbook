@@ -44,13 +44,11 @@ pxe_dust.each do |id|
   image = data_bag_item('pxe_dust', id)
   image_dir = "#{node['tftp']['directory']}/#{id}"
   interface = image['interface'] || default['interface'] || 'eth0'
+  platform = image['platform'] || default['platform']
   arch = image['arch'] || default['arch']
   domain = image['domain'] || default['domain']
   netboot_url = image['netboot_url'] || default['netboot_url']
   packages = image['packages'] || default['packages'] || ''
-  run_list = image['run_list'] || default['run_list'] || ''
-  rlist = run_list.split(',') #for supporting multiple items
-  environment = image['environment'] || default['environment']
   external_preseed = image['external_preseed'] || nil
   preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
 
@@ -67,17 +65,6 @@ pxe_dust.each do |id|
     root_crypted_password = image['root']['crypted_password']
   elsif default['root']
     root_crypted_password = default['root']['crypted_password']
-  end
-  if image['bootstrap']
-    http_proxy = image['bootstrap']['http_proxy']
-    http_proxy_user = image['bootstrap']['http_proxy_user']
-    http_proxy_pass = image['bootstrap']['http_proxy_pass']
-    https_proxy = image['bootstrap']['https_proxy']
-  elsif default['bootstrap']
-    http_proxy = default['bootstrap']['http_proxy']
-    http_proxy_user = default['bootstrap']['http_proxy_user']
-    http_proxy_pass = default['bootstrap']['http_proxy_pass']
-    https_proxy = default['bootstrap']['https_proxy']
   end
 
   directory image_dir do
@@ -139,27 +126,7 @@ pxe_dust.each do |id|
       )
   end
 
-  #Chef bootstrap script run by new installs
-  template "/var/www/#{id}-chef-bootstrap" do
-    source 'chef-bootstrap.sh.erb'
-    mode '0644'
-    variables(
-      :release => release,
-      :installer => installer,
-      :interface => interface,
-      :http_proxy => http_proxy,
-      :http_proxy_user => http_proxy_user,
-      :http_proxy_pass => http_proxy_pass,
-      :https_proxy => https_proxy,
-      :environment => environment,
-      :run_list => rlist
-      )
-  end
-
 end
-
-#generate local mirror install.sh and bootstrap templates
-include_recipe "pxe_dust::bootstrap_template"
 
 #configure the defaults
 link "#{node['tftp']['directory']}/pxelinux.0" do
@@ -180,11 +147,7 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
     )
 end
 
-#link the validation_key where it can be downloaded
-link '/var/www/validation.pem' do
-  to Chef::Config[:validation_key]
-end
-
-#generate local mirror install.sh and bootstrap templates
+#generate local mirror of installers
 include_recipe "pxe_dust::installers"
+#generate local mirror install.sh and bootstrap templates
 include_recipe "pxe_dust::bootstrap_template"

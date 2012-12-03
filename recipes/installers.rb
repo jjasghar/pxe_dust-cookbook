@@ -31,21 +31,35 @@ pxe_dust = data_bag('pxe_dust')
 default = data_bag_item('pxe_dust', 'default')
 pxe_dust.each do |id|
   image = data_bag_item('pxe_dust', id)
+  interface = image['interface'] || default['interface'] || 'eth0'
+  platform = image['platform'] || default['platform']
   arch = image['arch'] || default['arch']
   version = image['version'] || default['version']
+  environment = image['environment'] || default['environment']
+  run_list = image['run_list'] || default['run_list'] || ''
+  rlist = run_list.split(',') #for supporting multiple items
 
-  # only get the full stack installers in use
+  if image['bootstrap']
+    http_proxy = image['bootstrap']['http_proxy']
+    http_proxy_user = image['bootstrap']['http_proxy_user']
+    http_proxy_pass = image['bootstrap']['http_proxy_pass']
+    https_proxy = image['bootstrap']['https_proxy']
+  elsif default['bootstrap']
+    http_proxy = default['bootstrap']['http_proxy']
+    http_proxy_user = default['bootstrap']['http_proxy_user']
+    http_proxy_pass = default['bootstrap']['http_proxy_pass']
+    https_proxy = default['bootstrap']['https_proxy']
+  end
+
+  # only get the full stack installers to use
   case version
   when '10.04', '10.10'
-    platform = 'ubuntu'
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-10.04-#{rel_arch}"
   when '11.04', '11.10', '12.04'
-    platform = 'ubuntu'
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-11.04-#{rel_arch}"
   when '6.0.4'
-    platform = 'debian'
     version = '6'
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "debian-6.0.1-#{rel_arch}"
@@ -76,7 +90,27 @@ pxe_dust.each do |id|
     action :create_if_missing
   end
 
+  #Chef bootstrap script run by new installs
+  template "/var/www/#{id}-chef-bootstrap" do
+    source 'chef-bootstrap.sh.erb'
+    mode '0644'
+    variables(
+      :release => release,
+      :installer => installer,
+      :interface => interface,
+      :http_proxy => http_proxy,
+      :http_proxy_user => http_proxy_user,
+      :http_proxy_pass => http_proxy_pass,
+      :https_proxy => https_proxy,
+      :environment => environment,
+      :run_list => rlist
+      )
+  end
+
 end
 
-#generate local mirror install.sh and bootstrap templates
-include_recipe "pxe_dust::bootstrap_template"
+#link the validation_key where it can be downloaded
+link '/var/www/validation.pem' do
+  to Chef::Config[:validation_key]
+end
+

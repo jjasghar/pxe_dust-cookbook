@@ -1,7 +1,11 @@
 Description
 ===========
 
-Configures a tftpd server for serving Ubuntu installers over PXE and setting them to run a provided preseed.cfg. Builds a bootstrap template to take advantage of the locally mirrored contents.
+This cookbook handles the PXE booting life cycle with 3 recipes:
+
+* **server**: Configures a tftpd server for serving Ubuntu and Debian installers over PXE.
+* **installers**: Downloads the Chef full stack installers and writes out Chef bootstraps.
+* **bootstrap_templates**: Builds a template for use with `knife` to take advantage of the locally mirrored content.
 
 Requirements
 ============
@@ -38,6 +42,7 @@ Here is an example of the default.json:
 ```json
 {
     "id": "default",
+    "platform": "ubuntu",
     "arch": "amd64",
     "version": "12.04",
     "user": {
@@ -50,6 +55,7 @@ Here is an example of the default.json:
 
 Here are currently supported options available for inclusion in the `default.json`.:
 
+* `platform`: OS platform for the installer, (ie. 'ubuntu' or 'debian').
 * `arch`: Architecture of the netboot.tar.gz to use as the source of pxeboot images, default is 'amd64'.
 * `interface`: Which interface to install from, default is 'auto'.
 * `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '12.04'.
@@ -111,18 +117,17 @@ The recipe does the following:
 3. Instructs the installer prompt to automatically install.
 4. Passes the URL of the preseed.cfgs to the installer.
 5. Uses the preseed.cfg template to pass in any `apt-cacher-ng` caching proxies or other additional settings.
-6. Downloads the proper full stack installers for the chef-client and connects to the Chef server.
 
 installers
 ----------
 
-Downloads the full stack installers listed in the `pxe_dust` data bag.
+Downloads the full stack installers listed in the `pxe_dust` data bag and writes out the Chef bootstrap templates for the initial chef-client run connecting to the Chef server.
 
 bootstrap_template
 ------------------
 
-This recipe creates a bootstrap template that creates a local copy of the `install.sh` that uses the cached full stack installers from the `installers` recipe. It may then be downloaded from
-`http://NODE/pxedust.erb`
+This recipe creates a bootstrap template that uses a local `install.sh` that uses the cached full stack installers from the `installers` recipe. It may then be downloaded from
+`http://NODE/pxedust.erb` and put in your `.chef/bootstrap/` directory for use with `knife`.
 
 Usage
 =====

@@ -1,5 +1,6 @@
 {
     "id": "debian-squeeze-amd64",
+    "platform": "debian",
     "arch": "amd64",
     "version": "6.0.4",
     "netboot_url": "http://http.us.debian.org/debian/dists/squeeze/main/installer-amd64/current/images/netboot/netboot.tar.gz",
