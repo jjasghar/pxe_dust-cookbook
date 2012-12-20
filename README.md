@@ -1,7 +1,7 @@
 Description
 ===========
 
-This cookbook handles the PXE booting life cycle with 3 recipes:
+This cookbook handles local bootstrapping and PXE booting life cycle with 3 recipes:
 
 * **server**: Configures a tftpd server for serving Ubuntu and Debian installers over PXE.
 * **installers**: Downloads the Chef full stack installers and writes out Chef bootstraps.

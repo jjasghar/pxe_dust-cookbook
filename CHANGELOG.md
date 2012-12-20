@@ -1,5 +1,8 @@
 ## 1.4.0
+* refactor the default recipe to include `installers` and `bootstrap_template` recipes
 * `bootstrap_template` recipe generates a local mirror bootstrap template that uses a local install.sh and local full stack installers
+* `installers` recipe broken out to download the Chef full stack installers and write out Chef bootstraps.
+* require `platform` in the `pxe_dust` data bag
 
 ## 1.3.4
 * switched to LVM for Ubuntu
@@ -40,9 +43,7 @@
 * added Debian support
 
 ## 1.2.0:
-
 * COOK-999 uses the full stack intaller for bootstrapping nodes.
 
 ## 1.1.2:
-
 * Fixes COOK-481, COOK-594
