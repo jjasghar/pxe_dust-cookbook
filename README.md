@@ -5,7 +5,7 @@ This cookbook handles local bootstrapping and PXE booting life cycle with 3 reci
 
 * **server**: Configures a tftpd server for serving Ubuntu and Debian installers over PXE.
 * **installers**: Downloads the Chef full stack installers and writes out Chef bootstraps.
-* **bootstrap_templates**: Builds a template for use with `knife` to take advantage of the locally mirrored content.
+* **bootstrap_template**: Builds a template for use with `knife` to take advantage of the locally mirrored content.
 
 Requirements
 ============
