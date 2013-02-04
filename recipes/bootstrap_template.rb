@@ -2,7 +2,7 @@
 # Cookbook Name:: pxe_dust
 # Recipe:: bootstrap_template
 #
-# Copyright 2012, Opscode, Inc
+# Copyright 2012-2013, Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'chef/shell_out'
+require 'mixlib/shellout'
 
 include_recipe "pxe_dust::installers"
 
@@ -36,7 +36,7 @@ ruby_block "template url" do
     sed += "#{node['ipaddress']}\\/opscode-full-stack\\/#{node['hostname']}-/'"
     sed += " /var/www/chef-full.erb"
     Chef::Log.debug sed
-    cmd = Chef::ShellOut.new(sed)
+    cmd = Mixlib::ShellOut.new(sed)
     output = cmd.run_command
     Chef::Log.debug output.stdout
     nodetemplate = File.new("/var/www/#{node['hostname']}.erb", "w+")
@@ -62,7 +62,7 @@ ruby_block "install.sh url" do
     sed += "#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " /var/www/opscode-full-stack/original-install.sh"
     Chef::Log.debug sed
-    cmd = Chef::ShellOut.new(sed)
+    cmd = Mixlib::ShellOut.new(sed)
     output = cmd.run_command
     Chef::Log.debug output.stdout
     nodeinstall = File.new("/var/www/opscode-full-stack/#{node['hostname']}-install.sh", "w+")
@@ -89,7 +89,7 @@ ruby_block "create symlinks that match up with the urls" do
               fname = "#{filename}"
               ln = "ln -sf #{fname} #{lname}"
               Chef::Log.debug ln
-              cmd = Chef::ShellOut.new(ln)
+              cmd = Mixlib::ShellOut.new(ln)
               output = cmd.run_command
               Chef::Log.debug output.stdout
             end
