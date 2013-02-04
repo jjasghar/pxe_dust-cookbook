@@ -60,6 +60,7 @@ Here are currently supported options available for inclusion in the `default.jso
 * `interface`: Which interface to install from, default is 'auto'.
 * `version`: Ubuntu version of the netboot.tar.gz to use as the source of pxeboot images and full stack clients, default is '12.04'.
 * `domain`: Default domain for nodes, default is none.
+* `boot_volume_size`: Size of the LVM boot volume to create, default is '30GB'.
 * `packages`: Additional operating system packages to add to the preseed file.
 * `run_list`: Run list for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
 * `environment`: Environment for nodes, this value is NOT set as a default and will be passed to all boot types unless explicitly overwritten.
