@@ -26,8 +26,8 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
-#30GB size
-d-i partman-auto-lvm/guided_size string 30GB
+#default size is 30GB
+d-i partman-auto-lvm/guided_size string <%= @boot_volume_size %>
 #atomic: all files in one partition
 d-i partman-auto/choose_recipe select atomic
 d-i partman/default_filesystem string ext4

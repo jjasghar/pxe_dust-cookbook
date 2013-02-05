@@ -48,6 +48,7 @@ pxe_dust.each do |id|
   arch = image['arch'] || default['arch']
   domain = image['domain'] || default['domain']
   netboot_url = image['netboot_url'] || default['netboot_url']
+  boot_volume_size = image['boot_volume_size'] || default ['boot_volume_size'] || '30GB'
   packages = image['packages'] || default['packages'] || ''
   external_preseed = image['external_preseed'] || nil
   preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
@@ -118,6 +119,7 @@ pxe_dust.each do |id|
     variables(
       :id => id,
       :proxy => proxy,
+      :boot_volume_size => boot_volume_size,
       :packages => packages,
       :user_fullname => user_fullname,
       :user_username => user_username,
