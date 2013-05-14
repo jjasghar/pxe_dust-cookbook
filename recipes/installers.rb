@@ -54,14 +54,14 @@ pxe_dust.each do |id|
   # only get the full stack installers to use
   case version
   when '10.04', '10.10'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-10.04-#{rel_arch}"
   when '11.04', '11.10', '12.04'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-11.04-#{rel_arch}"
   when '6.0.4'
     version = '6'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "debian-6.0.1-#{rel_arch}"
   end
 
@@ -113,4 +113,3 @@ end
 link '/var/www/validation.pem' do
   to Chef::Config[:validation_key]
 end
-

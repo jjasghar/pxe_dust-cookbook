@@ -86,7 +86,7 @@ ruby_block "create symlinks that match up with the urls" do
           vpackages.each do |filename|
             if !File.symlink?(filename)
               lname = "#{distro}/chef_#{version}_#{filename.split('_').last}"
-              fname = "#{filename}"
+              fname = filename
               ln = "ln -sf #{fname} #{lname}"
               Chef::Log.debug ln
               cmd = Mixlib::ShellOut.new(ln)
