@@ -3,7 +3,7 @@
 # Cookbook Name:: pxe_dust
 # Attributes:: default
 #
-# Copyright 2011,2012 Opscode, Inc
+# Copyright 2011-2013 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,3 +19,4 @@
 #
 
 default['pxe_dust']['chefversion'] = nil
+default['pxe_dust']['dir'] = '/var/www/pxe_dust'

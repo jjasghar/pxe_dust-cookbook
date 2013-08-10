@@ -22,7 +22,7 @@ require 'net/http'
 include_recipe 'apache2'
 
 #location of the full stack installers
-directory "/var/www/opscode-full-stack" do
+directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
   mode '0755'
 end
 
@@ -65,7 +65,7 @@ pxe_dust.each do |id|
     release = "debian-6.0.1-#{rel_arch}"
   end
 
-  directory "/var/www/opscode-full-stack/#{release}" do
+  directory "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}" do
     mode '0755'
   end
 
@@ -84,14 +84,14 @@ pxe_dust.each do |id|
   end
 
   #download the full stack installer
-  remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
+  remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
     source location
     mode '0644'
     action :create_if_missing
   end
 
   #Chef bootstrap script run by new installs
-  template "/var/www/#{id}-chef-bootstrap" do
+  template "#{node['pxe_dust']['dir']}/#{id}-chef-bootstrap" do
     source 'chef-bootstrap.sh.erb'
     mode '0644'
     variables(
@@ -110,7 +110,7 @@ pxe_dust.each do |id|
 end
 
 #link the validation_key where it can be downloaded
-link '/var/www/validation.pem' do
+link "#{node['pxe_dust']['dir']}/validation.pem" do
   to Chef::Config[:validation_key]
 end
 

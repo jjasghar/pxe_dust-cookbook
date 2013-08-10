@@ -20,6 +20,17 @@
 include_recipe 'apache2'
 include_recipe 'tftp::server'
 
+directory node['pxe_dust']['dir'] do
+  mode 0755
+end
+
+web_app 'pxe_dust' do
+  cookbook 'apache2'
+  server_name node['hostname']
+  server_aliases [node['fqdn']]
+  docroot node['pxe_dust']['dir']
+end
+
 #search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
@@ -73,13 +84,13 @@ pxe_dust.each do |id|
   end
 
   #local mirror for netboots
-  remote_file "/var/www/#{id}-netboot.tar.gz" do
+  remote_file "#{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
     source netboot_url
     action :create_if_missing
   end
 
   #populate the netboot contents
-  execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
+  execute "tar -xzf #{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
     cwd image_dir
     not_if { Dir.entries(image_dir).length > 2 }
   end
@@ -112,7 +123,7 @@ pxe_dust.each do |id|
     end
   end
 
-  template "/var/www/#{id}-preseed.cfg" do
+  template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
     only_if { external_preseed.nil? }
     source "#{platform}-preseed.cfg.erb"
     mode '0644'
