@@ -1,19 +1,11 @@
-why is this a 403 http://opscode-omnitruck-release.s3.amazonaws.com
-gkarekinian
-4:10
-It's deprecated, replaced by http://opscode-omnibus-packages.s3.amazonaws.com
-
-override data bag settings with attributes
-
-fix apache settings
-
-upgrade dependencies
-
 share out install.sh as well
 
 ## 1.5.0
 
 * [COOK-2174]: pxe_dust needs to not depend on the apache2's default site being enabled
+* `node['pxe_dust']['default']` attributes may be used to override any data bag settings
+* use `['apt']['cacher_port']` from search results and gate on `['apt']['cacher-client']['restrict_environment']`
+* Debian 7, Ubuntu 10.04-13.04 support
 
 ## 1.4.2
 

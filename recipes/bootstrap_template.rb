@@ -86,8 +86,7 @@ ruby_block "create symlinks that match up with the urls" do
           vpackages.each do |filename|
             if !File.symlink?(filename)
               lname = "#{distro}/chef_#{version}_#{filename.split('_').last}"
-              fname = "#{filename}"
-              ln = "ln -sf #{fname} #{lname}"
+              ln = "ln -sf #{filename} #{lname}"
               Chef::Log.debug ln
               cmd = Mixlib::ShellOut.new(ln)
               output = cmd.run_command
@@ -100,12 +99,8 @@ ruby_block "create symlinks that match up with the urls" do
   end
 end
 
-#create ubuntu 12.04 links if 11.04 is present
-link "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-12.04-i686" do
-  to "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-11.04-i686"
-  ignore_failure #no ubuntu?
-end
-link "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-12.04-x86_64" do
-  to "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-11.04-x86_64"
-  ignore_failure #no ubuntu?
-end
+# #create ubuntu 12.04 links if 11.04 is present
+# link "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-12.04-i686" do
+#   to "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-11.04-i686"
+#   ignore_failure #no ubuntu?
+# end
