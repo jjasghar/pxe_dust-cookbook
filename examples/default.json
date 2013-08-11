@@ -5,6 +5,7 @@
     "version": "12.04",
     "domain": "localdomain",
     "run_list": "role[base]",
+    "boot_volume_size": "30GB",
     "netboot_url": "http://archive.ubuntu.com/ubuntu/dists/precise/main/installer-amd64/current/images/netboot/netboot.tar.gz",
     "user": {
         "fullname": "Ubuntu",
