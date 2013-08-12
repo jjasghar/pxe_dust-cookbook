@@ -6,6 +6,8 @@ share out install.sh as well
 * `node['pxe_dust']['default']` attributes may be used to override any data bag settings
 * use `['apt']['cacher_port']` from search results and gate on `['apt']['cacher-client']['restrict_environment']`
 * Debian 7, Ubuntu 10.04-13.04 support
+* Chef-Solo safe
+* Test-Kitchen coverage
 
 ## 1.4.2
 

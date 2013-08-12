@@ -23,13 +23,11 @@ describe "pxe_dust_test::server" do
   include Helpers::PxeDustTest
 
   it 'runs the apache and tftpd-hpa services' do
-    service("apache2").must_be_running
     service("tftpd-hpa").must_be_running
   end
 
   it 'creates the tftp and pxe_dust directories' do
     assert_directory node['tftp']['directory'], "root", "root", "755"
-    assert_directory node['pxe_dust']['dir'], "root", "root", "755"
     assert_directory "#{node['tftp']['directory']}/pxelinux.cfg", "root", "root", "755"
   end
 

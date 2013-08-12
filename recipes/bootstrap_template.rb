@@ -19,7 +19,8 @@
 
 require 'mixlib/shellout'
 
-include_recipe "pxe_dust::installers"
+include_recipe 'pxe_dust::common'
+include_recipe 'pxe_dust::installers'
 
 #write out a new pxedust.erb template
 remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do

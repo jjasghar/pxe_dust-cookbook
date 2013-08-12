@@ -17,19 +17,8 @@
 # limitations under the License.
 #
 
-include_recipe 'apache2'
 include_recipe 'tftp::server'
-
-directory node['pxe_dust']['dir'] do
-  mode 0755
-end
-
-web_app 'pxe_dust' do
-  cookbook 'apache2'
-  server_name node['hostname']
-  server_aliases [node['fqdn']]
-  docroot node['pxe_dust']['dir']
-end
+include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
@@ -52,8 +41,13 @@ directory "#{node['tftp']['directory']}/pxelinux.cfg" do
 end
 
 #loop over the other data bag items here
-pxe_dust = data_bag('pxe_dust')
-default = data_bag_item('pxe_dust', 'default').merge(node['pxe_dust']['default'])
+begin
+  pxe_dust = data_bag('pxe_dust')
+  default = data_bag_item('pxe_dust', 'default').merge(node['pxe_dust']['default'])
+rescue
+  Chef::Log.warn("No 'pxe_dust' data bag found.")
+  pxe_dust = []
+end
 pxe_dust.each do |id|
   image_dir = "#{node['tftp']['directory']}/#{id}"
   # override the defaults with the image values, then override those with node values

@@ -19,7 +19,7 @@
 
 require 'net/http'
 
-include_recipe 'apache2'
+include_recipe 'pxe_dust::common'
 
 #location of the full stack installers
 directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
@@ -27,8 +27,13 @@ directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
 end
 
 #loop over the other data bag items here
-pxe_dust = data_bag('pxe_dust')
-default = data_bag_item('pxe_dust', 'default').merge(node['pxe_dust']['default'])
+begin
+  pxe_dust = data_bag('pxe_dust')
+  default = data_bag_item('pxe_dust', 'default').merge(node['pxe_dust']['default'])
+rescue
+  Chef::Log.warn("No 'pxe_dust' data bag found.")
+  pxe_dust = []
+end
 pxe_dust.each do |id|
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
@@ -113,4 +118,3 @@ end
 link "#{node['pxe_dust']['dir']}/validation.pem" do
   to Chef::Config[:validation_key]
 end
-
