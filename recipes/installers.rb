@@ -28,8 +28,9 @@ end
 
 #loop over the other data bag items here
 begin
+  default = node['pxe_dust']['default']
   pxe_dust = data_bag('pxe_dust')
-  default = data_bag_item('pxe_dust', 'default').merge(node['pxe_dust']['default'])
+  default = data_bag_item('pxe_dust', 'default').merge(default)
 rescue
   Chef::Log.warn("No 'pxe_dust' data bag found.")
   pxe_dust = []
