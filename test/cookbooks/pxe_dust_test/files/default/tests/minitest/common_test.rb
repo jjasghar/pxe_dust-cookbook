@@ -27,8 +27,6 @@ describe "pxe_dust_test::common" do
   end
 
   it 'creates the pxe_dust directory' do
-    directory(node['pxe_dust']['dir']).must_exist
     directory(node['pxe_dust']['dir']).must_exist.with(:owner, "root")
-    assert_directory "#{node['pxe_dust']['dir']}", "root", "root", "755"
   end
 end

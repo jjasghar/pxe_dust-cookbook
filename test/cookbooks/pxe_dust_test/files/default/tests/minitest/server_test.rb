@@ -23,15 +23,16 @@ describe "pxe_dust_test::server" do
   include Helpers::PxeDustTest
 
   it 'runs the apache and tftpd-hpa services' do
-    service("tftpd-hpa").must_be_running
+    service("in.tftpd").must_be_running
   end
 
   it 'creates the tftp and pxe_dust directories' do
-    assert_directory node['tftp']['directory'], "root", "root", "755"
-    assert_directory "#{node['tftp']['directory']}/pxelinux.cfg", "root", "root", "755"
+    directory(node['tftp']['directory']).must_exist.with(:owner, "root")
+    directory("#{node['tftp']['directory']}/pxelinux.cfg").must_exist.with(:owner, "root")
   end
 
   it 'creates a default pxelinux.cfg' do
-    file("#{node['tftp']['directory']}/pxelinux.cfg/default").must_include "append auto=true priority=critical interface=auto vga16fb.modeset=0 initrd=default/12.04-installer/amd64/initrd.gz netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us netcfg/get_hostname=unknown netcfg/get_domain=testing.pxe netcfg/chooseinterface=auto url=http://<%= node['ipaddress'] %>/default-preseed.cfg DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5"
+    file("#{node['tftp']['directory']}/pxelinux.cfg/default").must_include node['pxe_dust']['default']['domain']
   end
+
 end

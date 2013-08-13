@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: apt_test
-# Recipe:: cacher-ng-client_test.rb
+# Cookbook Name:: pxe_dust_test
+# Recipe:: bootstrap_template_test.rb
 #
 # Copyright 2013, Opscode, Inc.
 #
@@ -19,19 +19,11 @@
 
 require File.expand_path('../support/helpers', __FILE__)
 
-describe "apt_test::cacher-ng-client" do
-  include Helpers::AptTest
-
-  it 'runs the cacher service' do
-    service("apt-cacher-ng").must_be_running
-  end
-
-  it 'creates 01proxy' do
-    file('/etc/apt/apt.conf.d/01proxy').must_include "Acquire::http::Proxy \"http://#{node['ipaddress']}:#{node['apt']['cacher_port']}\";"
-  end
-
-  it 'installed colordiff' do
-    package('colordiff').must_be_installed
+describe "pxe_dust_test::bootstrap_template" do
+  include Helpers::PxeDustTest
+  it 'creates the chef-full.erb and original-install.sh' do
+    file("#{node['pxe_dust']['dir']}/chef-full.erb").must_exist
+    file("#{node['pxe_dust']['dir']}/opscode-full-stack/original-install.sh").must_exist
   end
 
 end

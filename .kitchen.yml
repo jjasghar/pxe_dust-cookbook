@@ -2,12 +2,6 @@
 driver_plugin: vagrant
 driver_config:
   require_chef_omnibus: true
-  synced_folders: [
-  ["/Users/mray/ws/cookbooks/pxe_dust/.kitchen/kitchen-vagrant/opt/chef","/opt/chef"],
-  ["/Users/mray/ws/cookbooks/pxe_dust/.kitchen/kitchen-vagrant/usr/local/bin","/usr/local/bin"],
-  ["/Users/mray/ws/cookbooks/pxe_dust/.kitchen/kitchen-vagrant/var/cache/apt/archives", "/var/cache/apt/archives"],
-  ["/Users/mray/ws/cookbooks/pxe_dust/.kitchen/kitchen-vagrant/var/chef", "/var/chef"]
-  ]
 
 platforms:
 - name: ubuntu-12.04
@@ -24,12 +18,12 @@ platforms:
   run_list:
   - recipe[apt]
 
-- name: debian-7.1.0
-  driver_config:
-    box: opscode-debian-7.1.0
-    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_debian-7.1.0_provisionerless.box
-  run_list:
-  - recipe[apt]
+# - name: debian-7.1.0
+#   driver_config:
+#     box: opscode-debian-7.1.0
+#     box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_debian-7.1.0_provisionerless.box
+#   run_list:
+#   - recipe[apt]
 
 - name: ubuntu-13.04
   driver_config:
@@ -47,6 +41,19 @@ suites:
 - name: server
   run_list:
   - recipe[minitest-handler]
-  - recipe[pxe_dust::noop]
-#  - recipe[pxe_dust_test::server]
+  - recipe[pxe_dust_test::server]
+  attributes:
+    pxe_dust:
+      default:
+        domain: "testing.pxe"
+
+- name: installers
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::installers]
+
+- name: bootstrap_template
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::bootstrap_template]
 
