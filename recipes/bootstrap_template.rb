@@ -99,9 +99,3 @@ ruby_block "create symlinks that match up with the urls" do
     end
   end
 end
-
-# #create ubuntu 12.04 links if 11.04 is present
-# link "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-12.04-i686" do
-#   to "#{node['pxe_dust']['dir']}/opscode-full-stack/ubuntu-11.04-i686"
-#   ignore_failure #no ubuntu?
-# end
