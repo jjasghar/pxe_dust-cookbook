@@ -91,7 +91,7 @@ pxe_dust.each do |id|
   remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
     source location
     mode 0644
-    action :create_if_missing
+    action :create
   end
 
   run_list = (image['run_list'] || '').split(',') #for supporting multiple items
