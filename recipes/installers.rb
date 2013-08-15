@@ -52,20 +52,20 @@ pxe_dust.each do |id|
   # only get the full stack installers to use
   case version
   when /^10\./
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-10.04-#{rel_arch}"
   when /^11\./
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-11.04-#{rel_arch}"
   when /^12\./
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-12.04-#{rel_arch}"
   when /^13\./
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-13.04-#{rel_arch}"
   when /^6\.|^7\./
     version = '6'
-    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "debian-6.0.1-#{rel_arch}"
   end
 
