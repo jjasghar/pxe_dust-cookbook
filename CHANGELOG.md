@@ -1,12 +1,11 @@
-share out install.sh as well
-
 ## 1.5.0
 
 * [COOK-2174]: pxe_dust needs to not depend on the apache2's default site being enabled
 * `node['pxe_dust']['default']` attributes may be used to override any data bag settings
 * use `['apt']['cacher_port']` from search results and gate on `['apt']['cacher-client']['restrict_environment']`
-* Debian 7, Ubuntu 10.04-13.04 support
+* Use of the local install.sh has been documented and the files moved into the doc_root which is now browseable.
 * Chef-Solo safe
+* Debian 7.1 support
 * Test-Kitchen coverage
 
 ## 1.4.2

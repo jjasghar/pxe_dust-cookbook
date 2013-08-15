@@ -131,7 +131,7 @@ Downloads the full stack installers listed in the `pxe_dust` data bag and writes
 bootstrap_template
 ------------------
 
-This recipe creates a bootstrap template that uses a local `install.sh` that uses the cached full stack installers from the `installers` recipe. It may then be downloaded from `http://NODE/pxedust.erb` and put in your `.chef/bootstrap/` directory for use with `knife`.
+This recipe creates a bootstrap template that uses a local `install.sh` that uses the cached full stack installers from the `installers` recipe. It may then be downloaded from `http://NODE/NODE.erb` and put in your `.chef/bootstrap/` directory for use with `knife`. You may also use the `http://NODE/NODE-install.sh` if you want a local `install.sh`, perhaps for use with [https://github.com/schisamo/vagrant-omnibus](vagrant-omnibus)'s `OMNIBUS_INSTALL_URL` setting.
 
 Usage
 =====
