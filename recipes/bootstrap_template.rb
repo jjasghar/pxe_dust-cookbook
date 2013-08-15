@@ -30,11 +30,11 @@ end
 # change URL from
 # url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
-# url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
+# url="http://hypnotoad/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "template url" do
   block do
     sed = "sed 's/https:\\/\\/www.opscode.com\\/chef\\//"
-    sed += "http:\\/\\/#{node['ipaddress']}\\/opscode-full-stack\\/#{node['hostname']}-/'"
+    sed += "http:\\/\\/#{node['ipaddress']}\\/#{node['hostname']}-/'"
     sed += " #{node['pxe_dust']['dir']}/chef-full.erb"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)
@@ -49,7 +49,7 @@ ruby_block "template url" do
 end
 
 #write out a new install.sh
-remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/original-install.sh" do
+remote_file "#{node['pxe_dust']['dir']}/original-install.sh" do
   source "https://opscode.com/chef/install.sh"
 end
 
@@ -61,17 +61,17 @@ ruby_block "install.sh url" do
   block do
     sed = "sed 's/https:\\/\\/opscode.com\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
     sed += "http:\\/\\/#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
-    sed += " #{node['pxe_dust']['dir']}/opscode-full-stack/original-install.sh"
+    sed += " #{node['pxe_dust']['dir']}/original-install.sh"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)
     output = cmd.run_command
     Chef::Log.debug output.stdout
-    nodeinstall = File.new("#{node['pxe_dust']['dir']}/opscode-full-stack/#{node['hostname']}-install.sh", "w+")
+    nodeinstall = File.new("#{node['pxe_dust']['dir']}/#{node['hostname']}-install.sh", "w+")
     nodeinstall.puts output.stdout
     nodeinstall.chmod(0644)
   end
   action :nothing
-  subscribes :create, resources("remote_file[#{node['pxe_dust']['dir']}/opscode-full-stack/original-install.sh]")
+  subscribes :create, resources("remote_file[#{node['pxe_dust']['dir']}/original-install.sh]")
 end
 
 #straighten up symlinks for downloading from install.sh
