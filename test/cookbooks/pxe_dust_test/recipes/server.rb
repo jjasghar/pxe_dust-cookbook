@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
-# Cookbook Name:: pxe_dust
-# Recipe:: default
 #
-# Copyright 2011-2013, Opscode, Inc
+# Cookbook Name:: pxe_dust_test
+# Recipe:: server
+#
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

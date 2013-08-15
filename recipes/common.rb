@@ -1,8 +1,8 @@
 # Author:: Matt Ray <matt@opscode.com>
 # Cookbook Name:: pxe_dust
-# Recipe:: default
+# Recipe:: common
 #
-# Copyright 2011-2013, Opscode, Inc
+# Copyright 2013 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,16 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::server"
+include_recipe 'apache2'
+
+directory node['pxe_dust']['dir'] do
+  mode 0755
+end
+
+web_app 'pxe_dust' do
+  cookbook 'apache2'
+  server_name node['hostname']
+  server_aliases [node['fqdn']]
+  directory_options ['Indexes']
+  docroot node['pxe_dust']['dir']
+end

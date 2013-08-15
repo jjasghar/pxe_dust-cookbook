@@ -2,7 +2,7 @@
 # Cookbook Name:: pxe_dust
 # Recipe:: installers
 #
-# Copyright 2012 Opscode, Inc
+# Copyright 2012-2013 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,54 +19,58 @@
 
 require 'net/http'
 
-include_recipe 'apache2'
+include_recipe 'pxe_dust::common'
 
 #location of the full stack installers
-directory "/var/www/opscode-full-stack" do
+directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
   mode '0755'
 end
 
 #loop over the other data bag items here
-pxe_dust = data_bag('pxe_dust')
-default = data_bag_item('pxe_dust', 'default')
+begin
+  default = node['pxe_dust']['default']
+  pxe_dust = data_bag('pxe_dust')
+  default = data_bag_item('pxe_dust', 'default').merge(default)
+rescue
+  Chef::Log.warn("No 'pxe_dust' data bag found.")
+  pxe_dust = []
+end
 pxe_dust.each do |id|
-  image = data_bag_item('pxe_dust', id)
-  interface = image['interface'] || default['interface'] || 'eth0'
-  platform = image['platform'] || default['platform']
-  arch = image['arch'] || default['arch']
-  version = image['version'] || default['version']
-  environment = image['environment'] || default['environment']
-  run_list = image['run_list'] || default['run_list'] || ''
-  rlist = run_list.split(',') #for supporting multiple items
+  image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
+
+  platform = image['platform']
+  arch = image['arch']
+  version = image['version']
 
   if image['bootstrap']
     http_proxy = image['bootstrap']['http_proxy']
     http_proxy_user = image['bootstrap']['http_proxy_user']
     http_proxy_pass = image['bootstrap']['http_proxy_pass']
     https_proxy = image['bootstrap']['https_proxy']
-  elsif default['bootstrap']
-    http_proxy = default['bootstrap']['http_proxy']
-    http_proxy_user = default['bootstrap']['http_proxy_user']
-    http_proxy_pass = default['bootstrap']['http_proxy_pass']
-    https_proxy = default['bootstrap']['https_proxy']
   end
 
   # only get the full stack installers to use
   case version
-  when '10.04', '10.10'
+  when /^10\./
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-10.04-#{rel_arch}"
-  when '11.04', '11.10', '12.04'
+  when /^11\./
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "ubuntu-11.04-#{rel_arch}"
-  when '6.0.4'
+  when /^12\./
+    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    release = "ubuntu-12.04-#{rel_arch}"
+  when /^13\./
+    rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
+    release = "ubuntu-13.04-#{rel_arch}"
+  when /^6\.|^7\./
     version = '6'
     rel_arch = "#{arch =~ /i386/ ? 'i686' : 'x86_64'}"
     release = "debian-6.0.1-#{rel_arch}"
   end
 
-  directory "/var/www/opscode-full-stack/#{release}" do
-    mode '0755'
+  directory "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}" do
+    mode 0755
   end
 
   installer = ''
@@ -84,33 +88,34 @@ pxe_dust.each do |id|
   end
 
   #download the full stack installer
-  remote_file "/var/www/opscode-full-stack/#{release}/#{installer}" do
+  remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
     source location
-    mode '0644'
-    action :create_if_missing
+    mode 0644
+    action :create
   end
 
+  run_list = (image['run_list'] || '').split(',') #for supporting multiple items
+
   #Chef bootstrap script run by new installs
-  template "/var/www/#{id}-chef-bootstrap" do
+  template "#{node['pxe_dust']['dir']}/#{id}-chef-bootstrap" do
     source 'chef-bootstrap.sh.erb'
-    mode '0644'
+    mode 0644
     variables(
       :release => release,
       :installer => installer,
-      :interface => interface,
+      :interface => image['interface'] || 'eth0',
       :http_proxy => http_proxy,
       :http_proxy_user => http_proxy_user,
       :http_proxy_pass => http_proxy_pass,
       :https_proxy => https_proxy,
-      :environment => environment,
-      :run_list => rlist
+      :environment => image['environment'],
+      :run_list => run_list
       )
   end
 
 end
 
 #link the validation_key where it can be downloaded
-link '/var/www/validation.pem' do
+link "#{node['pxe_dust']['dir']}/validation.pem" do
   to Chef::Config[:validation_key]
 end
-

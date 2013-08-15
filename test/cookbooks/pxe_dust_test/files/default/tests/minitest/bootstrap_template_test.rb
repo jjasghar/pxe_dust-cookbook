@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
-# Cookbook Name:: pxe_dust
-# Recipe:: default
 #
-# Copyright 2011-2013, Opscode, Inc
+# Cookbook Name:: pxe_dust_test
+# Recipe:: bootstrap_template_test.rb
+#
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,13 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::server"
+require File.expand_path('../support/helpers', __FILE__)
+
+describe "pxe_dust_test::bootstrap_template" do
+  include Helpers::PxeDustTest
+  it 'creates the chef-full.erb and original-install.sh' do
+    file("#{node['pxe_dust']['dir']}/chef-full.erb").must_exist
+    file("#{node['pxe_dust']['dir']}/original-install.sh").must_exist
+  end
+
+end

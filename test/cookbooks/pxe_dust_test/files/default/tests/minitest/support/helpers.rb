@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
-# Cookbook Name:: pxe_dust
+#
+# Cookbook Name:: pxe_dust_test
 # Recipe:: default
 #
-# Copyright 2011-2013, Opscode, Inc
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,13 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::server"
+module Helpers
+  module PxeDustTest
+    require 'chef/mixin/shell_out'
+    include Chef::Mixin::ShellOut
+    include MiniTest::Chef::Assertions
+    include MiniTest::Chef::Context
+    include MiniTest::Chef::Resources
+
+  end
+end

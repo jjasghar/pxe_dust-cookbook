@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
-# Cookbook Name:: pxe_dust
-# Recipe:: default
 #
-# Copyright 2011-2013, Opscode, Inc
+# Cookbook Name:: pxe_dust_test
+# Recipe:: common_test.rb
+#
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,16 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::server"
+require File.expand_path('../support/helpers', __FILE__)
+
+describe "pxe_dust_test::common" do
+  include Helpers::PxeDustTest
+
+  it 'runs the apache and tftpd-hpa services' do
+    service("apache2").must_be_running
+  end
+
+  it 'creates the pxe_dust directory' do
+    directory(node['pxe_dust']['dir']).must_exist.with(:owner, "root")
+  end
+end

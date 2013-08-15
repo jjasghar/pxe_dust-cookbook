@@ -1,3 +1,18 @@
+## 1.5.0
+
+* [COOK-2174]: pxe_dust needs to not depend on the apache2's default site being enabled
+* `node['pxe_dust']['default']` attributes may be used to override any data bag settings
+* use `['apt']['cacher_port']` from search results and gate on `['apt']['cacher-client']['restrict_environment']`
+* Use of the local install.sh has been documented and the files moved into the doc_root which is now browseable.
+* Chef-Solo safe
+* Debian 7.1 support
+* Test-Kitchen coverage
+
+## 1.4.2
+
+* custom machines (crushinator) don't clean up when changed
+* foodcritic cleanups
+
 ## 1.4.0
 * refactor the default recipe to include `installers` and `bootstrap_template` recipes
 * `bootstrap_template` recipe generates a local mirror bootstrap template that uses a local install.sh and local full stack installers
@@ -16,11 +31,11 @@
 * support OS installation off of network interface besides eth0
 
 ## 1.3.0:
-* COOK-1621: support unmanaged preseed files (Craig Tracey)
+* [COOK-1621]: support unmanaged preseed files (Craig Tracey)
 * support new Omnitruck downloads for the Omnibus installer
 
 ## 1.2.6:
-* COOK-1502: pxe_dust has some if statements that could that could be reduced (Scott M. Likens)
+* [COOK-1502]: pxe_dust has some if statements that could that could be reduced (Scott M. Likens)
 * Changing the addresses databag items to have the hostname as their value (Austin Page)
 * Updating default chef version (Austin Page)
 * support multiple items in the run list from the data bag
@@ -35,7 +50,7 @@
 * added attribute for always pulling latest Chef installer
 
 ## 1.2.2:
-* COOK-1369 Ubuntu 12.04 Precise Pangolin support
+* [COOK-1369]: Ubuntu 12.04 Precise Pangolin support
 
 ## 1.2.1:
 * updated to use apt cookbook using apt-cacher-ng
@@ -43,7 +58,7 @@
 * added Debian support
 
 ## 1.2.0:
-* COOK-999 uses the full stack intaller for bootstrapping nodes.
+* [COOK-999]: uses the full stack intaller for bootstrapping nodes.
 
 ## 1.1.2:
 * Fixes COOK-481, COOK-594

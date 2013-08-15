@@ -2,7 +2,7 @@
 # Cookbook Name:: pxe_dust
 # Recipe:: server
 #
-# Copyright 2011-2012 Opscode, Inc
+# Copyright 2011-2013 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,69 +17,64 @@
 # limitations under the License.
 #
 
-include_recipe 'apache2'
 include_recipe 'tftp::server'
+include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
   proxy = '#d-i mirror/http/proxy string url'
 else
-  servers = search(:node, 'recipes:apt\:\:cacher-ng') || []
+  query = "apt_caching_server:true"
+  query += " AND chef_environment:#{node.chef_environment}" if node['apt']['cacher-client']['restrict_environment']
+  Chef::Log.debug("pxe_dust::server searching for '#{query}'")
+  servers = search(:node, query) || []
   if servers.length > 0
-    proxy = "d-i mirror/http/proxy string http://#{servers[0].ipaddress}:3142"
+    proxy = "d-i mirror/http/proxy string http://#{servers[0].ipaddress}:#{servers[0]['apt']['cacher_port']}"
   else
     proxy = '#d-i mirror/http/proxy string url'
   end
 end
 
 directory "#{node['tftp']['directory']}/pxelinux.cfg" do
-  mode '0755'
+  mode 0755
 end
 
 #loop over the other data bag items here
-pxe_dust = data_bag('pxe_dust')
-default = data_bag_item('pxe_dust', 'default')
+begin
+  default = node['pxe_dust']['default']
+  pxe_dust = data_bag('pxe_dust')
+  default = data_bag_item('pxe_dust', 'default').merge(default)
+rescue
+  Chef::Log.warn("No 'pxe_dust' data bag found.")
+  pxe_dust = []
+end
 pxe_dust.each do |id|
-  image = data_bag_item('pxe_dust', id)
   image_dir = "#{node['tftp']['directory']}/#{id}"
-  interface = image['interface'] || default['interface'] || 'eth0'
-  platform = image['platform'] || default['platform']
-  arch = image['arch'] || default['arch']
-  domain = image['domain'] || default['domain']
-  netboot_url = image['netboot_url'] || default['netboot_url']
-  boot_volume_size = image['boot_volume_size'] || default ['boot_volume_size'] || '30GB'
-  packages = image['packages'] || default['packages'] || ''
-  external_preseed = image['external_preseed'] || nil
-  preseed = external_preseed.nil? ? "#{id}-preseed.cfg" : external_preseed
+  # override the defaults with the image values, then override those with node values
+  image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
   if image['user']
     user_fullname = image['user']['fullname']
     user_username = image['user']['username']
     user_crypted_password = image['user']['crypted_password']
-  elsif default['user']
-    user_fullname = default['user']['fullname']
-    user_username = default['user']['username']
-    user_crypted_password = default['user']['crypted_password']
   end
   if image['root']
     root_crypted_password = image['root']['crypted_password']
-  elsif default['root']
-    root_crypted_password = default['root']['crypted_password']
   end
 
   directory image_dir do
-    mode '0755'
+    mode 0755
   end
 
   #local mirror for netboots
-  remote_file "/var/www/#{id}-netboot.tar.gz" do
-    source netboot_url
+  remote_file "#{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
+    source image['netboot_url']
     action :create_if_missing
   end
 
   #populate the netboot contents
-  execute "tar -xzf /var/www/#{id}-netboot.tar.gz" do
+  execute "tar -xzf #{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
     cwd image_dir
     not_if { Dir.entries(image_dir).length > 2 }
   end
@@ -89,38 +84,34 @@ pxe_dust.each do |id|
   end
 
   if image['addresses']
-    mac_addresses = image['addresses'].keys
-  else
-    mac_addresses = []
-  end
-
-  mac_addresses.each do |mac_address|
-    mac = mac_address.gsub(/:/, '-')
-    mac.downcase!
-    template "#{node['tftp']['directory']}/pxelinux.cfg/01-#{mac}" do
-      source 'pxelinux.cfg.erb'
-      mode '0644'
-      variables(
-        :platform => platform,
-        :id => id,
-        :interface => interface,
-        :arch => arch,
-        :domain => domain,
-        :hostname => image['addresses'][mac_address],
-        :preseed => preseed
-        )
+    image['addresses'].keys.each do |mac_address|
+      mac = mac_address.gsub(/:/, '-')
+      mac.downcase!
+      template "#{node['tftp']['directory']}/pxelinux.cfg/01-#{mac}" do
+        source 'pxelinux.cfg.erb'
+        mode 0644
+        variables(
+          :platform => image['platform'],
+          :id => id,
+          :interface => image['interface'] || 'eth0',
+          :arch => image['arch'] || 'amd64',
+          :domain => image['domain'],
+          :hostname => image['addresses'][mac_address],
+          :preseed => image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
+          )
+      end
     end
   end
 
-  template "/var/www/#{id}-preseed.cfg" do
-    only_if { external_preseed.nil? }
-    source "#{platform}-preseed.cfg.erb"
-    mode '0644'
+  template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
+    only_if { image['external_preseed'].nil? }
+    source "#{image['platform']}-preseed.cfg.erb"
+    mode 0644
     variables(
       :id => id,
       :proxy => proxy,
-      :boot_volume_size => boot_volume_size,
-      :packages => packages,
+      :boot_volume_size => image['boot_volume_size'] || '30GB',
+      :packages => image['packages'] || '',
       :user_fullname => user_fullname,
       :user_username => user_username,
       :user_crypted_password => user_crypted_password,
@@ -139,10 +130,10 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
   source 'pxelinux.cfg.erb'
   mode '0644'
   variables(
-    :platform => default['platform'],
+    :platform => default['platform'] || '12.04',
     :id => 'default',
     :interface => default['interface'] || 'auto',
-    :arch => default['arch'],
+    :arch => default['arch'] || 'amd64',
     :domain => default['domain'],
     :hostname => 'unknown',
     :preseed => default['external_preseed'] || 'default-preseed.cfg'
