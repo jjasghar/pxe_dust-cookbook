@@ -14,10 +14,11 @@ Requires Chef 10.12 or later since it now uses the full-chef installer.
 
 ## Platform:
 
-Tested on:
-
-* Ubuntu 10.04-13.04
-* Debian 6.0-7.1
+Please refer to the [TESTING file](TESTING.md) to see the currently (and passing) tested platforms. The release was tested on:
+* Ubuntu 10.04
+* Ubuntu 12.04
+* Ubuntu 13.04
+* Debian 6.0-7.1 (have with manual testing)
 
 ## Cookbooks:
 
@@ -164,10 +165,12 @@ Attributes
 License and Author
 ==================
 
-Author:: Matt Ray <matt@opscode.com>
-Author:: Joshua Timberman <joshua@opscode.com>
-
-Copyright:: 2011-2013 Opscode, Inc
+|                      |                                        |
+|:---------------------|:---------------------------------------|
+| **Author**           | Matt Ray (<matt@opscode.com>)          |
+| **Author**           | Joshua Timberman <joshua@opscode.com>  |
+|                      |                                        |
+| **Copyright**        | Copyright (c) 2011-2013, Opscode, Inc. |
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

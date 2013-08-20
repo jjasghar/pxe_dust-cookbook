@@ -23,3 +23,13 @@ Once the above are installed, you should be able to run Test Kitchen:
 
     kitchen list
     kitchen test
+
+
+This cookbook has the following Test-Kitchen coverage:
+
+| Test Coverage      | Ubuntu 10.04  | Ubuntu 12.04 | Ubuntu 13.04 | Debian 7.1 |
+| ------------------ |:-------------:|:------------:|:------------:|:----------:|
+| common             | **Y**         | **Y**        | **Y**        | **N**      |
+| server             | **Y**         | **Y**        | **Y**        | **N**      |
+| installers         | **Y**         | **Y**        | **Y**        | **N**      |
+| bootstrap_template | **Y**         | **Y**        | **Y**        | **N**      |
