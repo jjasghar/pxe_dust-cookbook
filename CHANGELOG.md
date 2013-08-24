@@ -1,3 +1,8 @@
+## 1.6.0
+
+* yaboot recipe for pxe booting PPC machines
+* `node['pxe_dust']['bootstrap']` attribute to turn off Chef bootstrapping if desired
+
 ## 1.5.0
 
 * [COOK-2174]: pxe_dust needs to not depend on the apache2's default site being enabled
