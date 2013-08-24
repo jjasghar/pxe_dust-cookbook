@@ -1,8 +1,8 @@
 # Author:: Matt Ray <matt@opscode.com>
 # Cookbook Name:: pxe_dust
-# Recipe:: server
+# Recipe:: yaboot
 #
-# Copyright 2011-2013 Opscode, Inc
+# Copyright 2013 Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe 'tftp::server'
-include_recipe 'pxe_dust::common'
+include_recipe 'pxe_dust::server'
 
 #search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
@@ -36,11 +35,7 @@ else
   end
 end
 
-directory "#{node['tftp']['directory']}/pxelinux.cfg" do
-  mode 0755
-end
-
-#loop over the other data bag items here
+# loop over the other data bag items here
 begin
   default = node['pxe_dust']['default']
   pxe_dust = data_bag('pxe_dust')
@@ -54,7 +49,7 @@ pxe_dust.each do |id|
   # override the defaults with the image values, then override those with node values
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
-  unless image['arch'].eql?('ppc') #ppc is dealt with in yaboot.rb
+  if image['arch'].eql?('ppc') #skip it otherwise
     if image['user']
       user_fullname = image['user']['fullname']
       user_username = image['user']['username']
@@ -64,38 +59,58 @@ pxe_dust.each do |id|
       root_crypted_password = image['root']['crypted_password']
     end
 
-    directory image_dir do
-      mode 0755
-    end
-
-    #local mirror for netboots
-    remote_file "#{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
+    #local mirror for ppc mini ISO
+    remote_file "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso" do
       source image['netboot_url']
       action :create_if_missing
     end
 
-    #populate the netboot contents
-    execute "tar -xzf #{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
-      cwd image_dir
-      not_if { Dir.entries(image_dir).length > 2 }
+    # target dir
+    directory "#{image_dir}/iso" do
+      mode 0755
+      recursive true
     end
 
-    link "#{node['tftp']['directory']}/pxe-#{id}.0" do
-      to "#{id}/pxelinux.0"
+    # mount iso at target
+    mount "mount the iso"  do
+      mount_point "#{image_dir}/iso"
+      device "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso"
+      options 'loop'
+      action :mount
     end
 
+    # populate the target with iso/install contents
+    ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
+      remote_file "#{image_dir}/#{ifile}" do
+        source "file://#{image_dir}/iso/install/#{ifile}"
+        action :create
+      end
+    end
+
+    # get the yaboot
+    remote_file "#{node['tftp']['directory']}/yaboot" do
+      source "file://#{image_dir}/iso/install/yaboot"
+      action :create
+    end
+
+    # umount iso
+    mount "umount the iso"  do
+      mount_point "#{image_dir}/iso"
+      device "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso"
+      action :umount
+    end
+
+    # template the yaboot.conf
     if image['addresses']
       image['addresses'].keys.each do |mac_address|
         mac = mac_address.gsub(/:/, '-')
         mac.downcase!
-        template "#{node['tftp']['directory']}/pxelinux.cfg/01-#{mac}" do
-          source 'pxelinux.cfg.erb'
+        template "#{node['tftp']['directory']}/yaboot.conf" do
+          source 'yaboot.conf.erb'
           mode 0644
           variables(
-            :platform => image['platform'],
-            :id => id,
             :interface => image['interface'] || 'eth0',
-            :arch => image['arch'] || 'amd64',
+            :id => id,
             :domain => image['domain'],
             :hostname => image['addresses'][mac_address],
             :preseed => image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
@@ -104,6 +119,7 @@ pxe_dust.each do |id|
       end
     end
 
+    # preseed
     template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
       only_if { image['external_preseed'].nil? }
       source "#{image['platform']}-preseed.cfg.erb"
@@ -122,27 +138,3 @@ pxe_dust.each do |id|
 
   end
 end
-
-#configure the defaults
-link "#{node['tftp']['directory']}/pxelinux.0" do
-  to 'default/pxelinux.0'
-end
-
-template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
-  source 'pxelinux.cfg.erb'
-  mode '0644'
-  variables(
-    :platform => default['platform'] || '12.04',
-    :id => 'default',
-    :interface => default['interface'] || 'auto',
-    :arch => default['arch'] || 'amd64',
-    :domain => default['domain'],
-    :hostname => 'unknown',
-    :preseed => default['external_preseed'] || 'default-preseed.cfg'
-    )
-end
-
-#generate local mirror of installers
-include_recipe "pxe_dust::installers"
-#generate local mirror install.sh and bootstrap templates
-include_recipe "pxe_dust::bootstrap_template"
