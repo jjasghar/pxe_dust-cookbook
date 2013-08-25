@@ -122,7 +122,7 @@ pxe_dust.each do |id|
     # preseed
     template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
       only_if { image['external_preseed'].nil? }
-      source "#{image['platform']}-preseed.cfg.erb"
+      source "#{image['platform']}-preseed-yaboot.cfg.erb"
       mode 0644
       variables(
         :id => id,
@@ -132,7 +132,8 @@ pxe_dust.each do |id|
         :user_fullname => user_fullname,
         :user_username => user_username,
         :user_crypted_password => user_crypted_password,
-        :root_crypted_password => root_crypted_password
+        :root_crypted_password => root_crypted_password,
+        :bootstrap => false #set this to the node setting later
         )
     end
 

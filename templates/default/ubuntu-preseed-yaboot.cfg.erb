@@ -15,6 +15,10 @@ d-i clock-setup/ntp boolean true
 
 ### Partitioning
 #specify disk and method
+# d-i partman-auto/choose_recipe	select	/lib/partman/recipes-powerpc-powermac_newworld/30atomic
+# d-i	partman-auto/expert_recipe	string
+# d-i partman-auto/automatically_partition	select
+
 # d-i partman-auto/disk string /dev/sda
 # d-i partman-auto/method string lvm
 # #no warnings or confirmations
@@ -63,7 +67,7 @@ d-i finish-install/reboot_in_progress note
 #d-i debian-installer/exit/halt boolean true
 # This will power off the machine instead of just halting it.
 #d-i debian-installer/exit/poweroff boolean true
-<% if node['pxe_dust']['bootstrap'] -%>
+<% if @bootstrap -%>
 d-i preseed/late_command string in-target wget --no-proxy -O /tmp/chef-bootstrap \
   http://<%= node['ipaddress'] %>/<%= @id %>-chef-bootstrap ;\
   chroot /target /bin/bash /tmp/chef-bootstrap
