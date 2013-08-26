@@ -50,22 +50,22 @@ pxe_dust.each do |id|
   end
 
   # only get the full stack installers to use
+  rel_arch = case arch
+             when 'ppc' then 'powerpc'
+             when 'i386' then 'i686'
+             else 'x86_64'
+             end
   case version
   when /^10\./
-    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-10.04-#{rel_arch}"
   when /^11\./
-    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-11.04-#{rel_arch}"
   when /^12\./
-    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-12.04-#{rel_arch}"
   when /^13\./
-    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "ubuntu-13.04-#{rel_arch}"
   when /^6\.|^7\./
     version = '6'
-    rel_arch = arch =~ /i386/ ? 'i686' : 'x86_64'
     release = "debian-6.0.1-#{rel_arch}"
   end
 
@@ -76,22 +76,28 @@ pxe_dust.each do |id|
   installer = ''
   location = ''
 
-  #for getting latest version of full stack installers
-  Net::HTTP.start('www.opscode.com') do |http|
-    Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-    response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-    Chef::Log.debug("Code = #{response.code}")
-    location = response['location']
-    Chef::Log.info("Omnitruck URL: #{location}")
-    installer = location.split('/').last
-    Chef::Log.debug("Omnitruck installer: #{installer}")
-  end
+  if arch.eql?('ppc')
+    # must install by hand currently chef_11.6.0-1.ubuntu.12.04_amd64.deb
+    installer = "chef_#{node['pxe_dust']['chefversion']}-0.#{platform}.#{version}_#{rel_arch}.deb"
+  else
+    #for getting latest version of full stack installers
+    Net::HTTP.start('www.opscode.com') do |http|
+      Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
+      response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
+      Chef::Log.debug("Code = #{response.code}")
+      location = response['location']
+      Chef::Log.info("Omnitruck URL: #{location}")
+      installer = location.split('/').last
+      Chef::Log.debug("Omnitruck installer: #{installer}")
+    end
 
-  #download the full stack installer
-  remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
-    source location
-    mode 0644
-    action :create
+    #download the full stack installer
+    remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
+      source location
+      mode 0644
+      action :create_if_missing
+    end
+
   end
 
   run_list = (image['run_list'] || '').split(',') #for supporting multiple items

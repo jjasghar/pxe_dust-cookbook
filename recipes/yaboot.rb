@@ -81,17 +81,11 @@ pxe_dust.each do |id|
 
     # populate the target with iso/install contents
     ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
-      remote_file "#{image_dir}/#{ifile}" do
-        source "file://#{image_dir}/iso/install/#{ifile}"
-        action :create
-      end
+      execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/"
     end
 
     # get the yaboot
-    remote_file "#{node['tftp']['directory']}/yaboot" do
-      source "file://#{image_dir}/iso/install/yaboot"
-      action :create
-    end
+    execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/"
 
     # umount iso
     mount "umount the iso"  do
@@ -133,7 +127,7 @@ pxe_dust.each do |id|
         :user_username => user_username,
         :user_crypted_password => user_crypted_password,
         :root_crypted_password => root_crypted_password,
-        :bootstrap => false #set this to the node setting later
+        :bootstrap => node['pxe_dust']['bootstrap']
         )
     end
 
