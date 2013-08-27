@@ -116,7 +116,8 @@ pxe_dust.each do |id|
         :user_fullname => user_fullname,
         :user_username => user_username,
         :user_crypted_password => user_crypted_password,
-        :root_crypted_password => root_crypted_password
+        :root_crypted_password => root_crypted_password,
+        :bootstrap => node['pxe_dust']['bootstrap']
         )
     end
 
