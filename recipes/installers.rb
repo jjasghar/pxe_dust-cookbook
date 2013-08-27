@@ -121,7 +121,5 @@ pxe_dust.each do |id|
 
 end
 
-#link the validation_key where it can be downloaded
-link "#{node['pxe_dust']['dir']}/validation.pem" do
-  to Chef::Config[:validation_key]
-end
+#copy the validation_key where it can be downloaded
+execute "cp #{Chef::Config[:validation_key]} #{node['pxe_dust']['dir']}/validation.pem"
