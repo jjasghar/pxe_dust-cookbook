@@ -23,10 +23,14 @@ directory node['pxe_dust']['dir'] do
   mode 0755
 end
 
+directory "#{node['pxe_dust']['dir']}/isos" do
+  mode 0755
+end
+
 web_app 'pxe_dust' do
   cookbook 'apache2'
   server_name node['hostname']
   server_aliases [node['fqdn']]
-  directory_options ['Indexes']
+  directory_options ['Indexes', 'FollowSymLinks']
   docroot node['pxe_dust']['dir']
 end
