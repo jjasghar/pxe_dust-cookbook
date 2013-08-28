@@ -49,7 +49,11 @@ pxe_dust.each do |id|
   # override the defaults with the image values, then override those with node values
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
-  if image['arch'].eql?('ppc') #skip it otherwise
+  platform = image['platform']
+  arch = image['arch']
+  version = image['version']
+
+  if arch.eql?('ppc') #skip it otherwise
     if image['user']
       user_fullname = image['user']['fullname']
       user_username = image['user']['username']
@@ -60,7 +64,7 @@ pxe_dust.each do |id|
     end
 
     #local mirror for ppc mini ISO
-    remote_file "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso" do
+    remote_file "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso" do
       source image['netboot_url']
       action :create_if_missing
     end
@@ -74,23 +78,27 @@ pxe_dust.each do |id|
     # mount iso at target
     mount "mount the iso"  do
       mount_point "#{image_dir}/iso"
-      device "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso"
+      device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
       options 'loop'
       action :mount
     end
 
     # populate the target with iso/install contents
     ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
-      execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/"
+      execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/#{ifile}" do
+        not_if { File.exists?("#{image_dir}/#{ifile}") }
+      end
     end
 
     # get the yaboot
-    execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/"
+    execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/yaboot" do
+      not_if { File.exists?("#{node['tftp']['directory']}/yaboot") }
+    end
 
     # umount iso
     mount "umount the iso"  do
       mount_point "#{image_dir}/iso"
-      device "#{node['pxe_dust']['dir']}/#{id}-ppc-mini.iso"
+      device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
       action :umount
     end
 
@@ -116,7 +124,7 @@ pxe_dust.each do |id|
     # preseed
     template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
       only_if { image['external_preseed'].nil? }
-      source "#{image['platform']}-preseed-yaboot.cfg.erb"
+      source "#{platform}-preseed-yaboot.cfg.erb"
       mode 0644
       variables(
         :id => id,

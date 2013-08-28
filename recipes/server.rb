@@ -54,7 +54,11 @@ pxe_dust.each do |id|
   # override the defaults with the image values, then override those with node values
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
-  unless image['arch'].eql?('ppc') #ppc is dealt with in yaboot.rb
+  platform = image['platform']
+  arch = image['arch']
+  version = image['version']
+
+  unless arch.eql?('ppc') #ppc is dealt with in yaboot.rb
     if image['user']
       user_fullname = image['user']['fullname']
       user_username = image['user']['username']
@@ -69,13 +73,13 @@ pxe_dust.each do |id|
     end
 
     #local mirror for netboots
-    remote_file "#{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
+    remote_file "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-netboot.tar.gz" do
       source image['netboot_url']
       action :create_if_missing
     end
 
     #populate the netboot contents
-    execute "tar -xzf #{node['pxe_dust']['dir']}/#{id}-netboot.tar.gz" do
+    execute "tar -xzf #{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-netboot.tar.gz" do
       cwd image_dir
       not_if { Dir.entries(image_dir).length > 2 }
     end
@@ -92,10 +96,10 @@ pxe_dust.each do |id|
           source 'pxelinux.cfg.erb'
           mode 0644
           variables(
-            :platform => image['platform'],
+            :platform => platform,
             :id => id,
             :interface => image['interface'] || 'eth0',
-            :arch => image['arch'] || 'amd64',
+            :arch => arch || 'amd64',
             :domain => image['domain'],
             :hostname => image['addresses'][mac_address],
             :preseed => image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
@@ -106,7 +110,7 @@ pxe_dust.each do |id|
 
     template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
       only_if { image['external_preseed'].nil? }
-      source "#{image['platform']}-preseed.cfg.erb"
+      source "#{platform}-preseed.cfg.erb"
       mode 0644
       variables(
         :id => id,
