@@ -1,0 +1,15 @@
+device=enet:
+partition=0
+timeout=10
+init-message="Chef-managed Linux Network boot"
+default=install
+root=/dev/ram
+
+message=/<%= @id %>/boot.msg
+
+image=/<%= @id %>/netboot-linux
+	label=install
+	initrd=/<%= @id %>/netboot-initrd.gz
+	initrd-size=32658
+	append="auto=true priority=critical interface=<%= @interface %> netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us keyboard-configuration/xkb-keymap=us netcfg/get_hostname=<%= @hostname %> netcfg/get_domain=<%= @domain %> netcfg/chooseinterface=auto url=http://<%= node['ipaddress'] %>/<%= @preseed %> DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5"
+	read-only

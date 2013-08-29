@@ -1,3 +1,10 @@
+## 1.6.0
+
+* yaboot recipe for pxe booting PPC machines
+* added `chef` data bag attribute to turn off Chef bootstrapping if desired
+* added `halt` data bag attribute to turn off reboot at end of preseed
+* cleaned up downloading redundant ISOs
+
 ## 1.5.0
 
 * [COOK-2174]: pxe_dust needs to not depend on the apache2's default site being enabled
