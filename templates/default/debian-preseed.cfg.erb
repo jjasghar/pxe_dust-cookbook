@@ -71,7 +71,7 @@ d-i passwd/root-password-crypted password <%= @root_crypted_password %>
 d-i finish-install/reboot_in_progress note
 # This is how to make the installer shutdown when finished, but not
 # reboot into the installed system.
-#d-i debian-installer/exit/halt boolean true
+d-i debian-installer/exit/halt boolean <%= @halt %>
 # This will power off the machine instead of just halting it.
 #d-i debian-installer/exit/poweroff boolean true
 <% if @bootstrap -%>
