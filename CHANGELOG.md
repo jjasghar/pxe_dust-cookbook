@@ -1,3 +1,7 @@
+## 1.7.0
+
+* [COOK-3664] multiple nics confuse pxe_dust. Added node['pxe_dust']['interface'] to solve this.
+
 ## 1.6.0
 
 * yaboot recipe for pxe booting PPC machines
