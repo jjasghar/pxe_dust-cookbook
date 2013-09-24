@@ -27,6 +27,12 @@ remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do
   source "https://raw.github.com/opscode/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
 end
 
+if node['pxe_dust']['interface']
+  server_ipaddress = interface_ipaddress(node, node['pxe_dust']['interface'])
+else
+  server_ipaddress = node.ipaddress
+end
+
 # change URL from
 # url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
@@ -34,7 +40,7 @@ end
 ruby_block "template url" do
   block do
     sed = "sed 's/https:\\/\\/www.opscode.com\\/chef\\//"
-    sed += "http:\\/\\/#{node['ipaddress']}\\/#{node['hostname']}-/'"
+    sed += "http:\\/\\/#{server_ipaddress}\\/#{node['hostname']}-/'"
     sed += " #{node['pxe_dust']['dir']}/chef-full.erb"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)
@@ -60,7 +66,7 @@ end
 ruby_block "install.sh url" do
   block do
     sed = "sed 's/https:\\/\\/opscode.com\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
-    sed += "http:\\/\\/#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
+    sed += "http:\\/\\/#{server_ipaddress}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " #{node['pxe_dust']['dir']}/original-install.sh"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)

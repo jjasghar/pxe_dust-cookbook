@@ -29,10 +29,21 @@ else
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
   if servers.length > 0
-    proxy = "d-i mirror/http/proxy string http://#{servers[0].ipaddress}:#{servers[0]['apt']['cacher_port']}"
+    if node['pxe_dust']['interface']
+      cacher_ipaddress = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
+    else
+      cacher_ipaddress = servers[0].ipaddress
+    end
+    proxy = "d-i mirror/http/proxy string http://#{cacher_ipaddress}:#{servers[0]['apt']['cacher_port']}"
   else
     proxy = '#d-i mirror/http/proxy string url'
   end
+end
+
+if node['pxe_dust']['interface']
+  server_ipaddress = interface_ipaddress(node, node['pxe_dust']['interface'])
+else
+  server_ipaddress = node.ipaddress
 end
 
 # loop over the other data bag items here
@@ -44,6 +55,7 @@ rescue
   Chef::Log.warn("No 'pxe_dust' data bag found.")
   pxe_dust = []
 end
+
 pxe_dust.each do |id|
   image_dir = "#{node['tftp']['directory']}/#{id}"
   # override the defaults with the image values, then override those with node values
@@ -111,6 +123,7 @@ pxe_dust.each do |id|
           source 'yaboot.conf.erb'
           mode 0644
           variables(
+            :server_ipaddress => server_ipaddress,
             :interface => image['interface'] || 'eth0',
             :id => id,
             :domain => image['domain'],
@@ -127,6 +140,7 @@ pxe_dust.each do |id|
       source "#{platform}-preseed.cfg.erb"
       mode 0644
       variables(
+        :server_ipaddress => server_ipaddress,
         :id => id,
         :proxy => proxy,
         :boot_volume_size => image['boot_volume_size'] || '30GB',

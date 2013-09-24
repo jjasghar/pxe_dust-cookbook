@@ -26,6 +26,12 @@ directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
   mode '0755'
 end
 
+if node['pxe_dust']['interface']
+  server_ipaddress = interface_ipaddress(node, node['pxe_dust']['interface'])
+else
+  server_ipaddress = node.ipaddress
+end
+
 #loop over the other data bag items here
 begin
   default = node['pxe_dust']['default']
@@ -35,6 +41,7 @@ rescue
   Chef::Log.warn("No 'pxe_dust' data bag found.")
   pxe_dust = []
 end
+
 pxe_dust.each do |id|
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
@@ -107,6 +114,7 @@ pxe_dust.each do |id|
     source 'chef-bootstrap.sh.erb'
     mode 0644
     variables(
+      :server_ipaddress => server_ipaddress,
       :release => release,
       :installer => installer,
       :interface => image['interface'] || 'eth0',

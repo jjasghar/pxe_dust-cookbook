@@ -65,6 +65,6 @@ d-i debian-installer/exit/halt boolean <%= @halt %>
 #d-i debian-installer/exit/poweroff boolean true
 <% if @bootstrap -%>
 d-i preseed/late_command string in-target wget --no-proxy -O /tmp/chef-bootstrap \
-  http://<%= node['ipaddress'] %>/<%= @id %>-chef-bootstrap ;\
+  http://<%= @server_ipaddress %>/<%= @id %>-chef-bootstrap ;\
   chroot /target /bin/bash /tmp/chef-bootstrap
 <% end -%>

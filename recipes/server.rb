@@ -35,11 +35,11 @@ else
   servers = search(:node, query) || []
   if servers.length > 0
     if node['pxe_dust']['interface']
-      cacher_ip = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
+      cacher_ipaddress = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
     else
-      cacher_ip = servers[0].ipaddress
+      cacher_ipaddress = servers[0].ipaddress
     end
-    proxy = "d-i mirror/http/proxy string http://#{cacher_ip}:#{servers[0]['apt']['cacher_port']}"
+    proxy = "d-i mirror/http/proxy string http://#{cacher_ipaddress}:#{servers[0]['apt']['cacher_port']}"
   else
     proxy = '#d-i mirror/http/proxy string url'
   end
@@ -47,6 +47,12 @@ end
 
 directory "#{node['tftp']['directory']}/pxelinux.cfg" do
   mode 0755
+end
+
+if node['pxe_dust']['interface']
+  server_ipaddress = interface_ipaddress(node, node['pxe_dust']['interface'])
+else
+  server_ipaddress = node.ipaddress
 end
 
 #loop over the other data bag items here
@@ -105,6 +111,7 @@ pxe_dust.each do |id|
           source 'pxelinux.cfg.erb'
           mode 0644
           variables(
+            :server_ipaddress => server_ipaddress,
             :platform => platform,
             :id => id,
             :interface => image['interface'] || 'eth0',
@@ -122,6 +129,7 @@ pxe_dust.each do |id|
       source "#{platform}-preseed.cfg.erb"
       mode 0644
       variables(
+        :server_ipaddress => server_ipaddress,
         :id => id,
         :proxy => proxy,
         :boot_volume_size => image['boot_volume_size'] || '30GB',
@@ -147,6 +155,7 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
   source 'pxelinux.cfg.erb'
   mode '0644'
   variables(
+    :server_ipaddress => server_ipaddress,
     :platform => default['platform'] || '12.04',
     :id => 'default',
     :interface => default['interface'] || 'auto',

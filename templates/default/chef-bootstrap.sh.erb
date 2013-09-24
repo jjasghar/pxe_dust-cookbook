@@ -1,6 +1,6 @@
 . /etc/profile
 if [ ! -f /usr/bin/chef-client ]; then
-   wget -q -O /tmp/<%= @installer %> http://<%= node['ipaddress'] %>/opscode-full-stack/<%= @release %>/<%= @installer %>
+   wget -q -O /tmp/<%= @installer %> http://<%= @server_ipaddress %>/opscode-full-stack/<%= @release %>/<%= @installer %>
    dpkg -i /tmp/<%= @installer %>
 fi
 
@@ -25,7 +25,7 @@ cat > /etc/chef/first-boot.json <<EOF
 }
 EOF
 
-wget -O /etc/chef/validation.pem http://<%= node['ipaddress'] %>/validation.pem
+wget -O /etc/chef/validation.pem http://<%= @server_ipaddress %>/validation.pem
 
 /usr/bin/chef-client<% if @environment %> -E <%= @environment %><% end %> -j /etc/chef/first-boot.json
 

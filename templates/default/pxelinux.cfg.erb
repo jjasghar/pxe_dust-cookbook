@@ -6,5 +6,5 @@ label install
 	menu label Chef pxe_dust <%= @id %>
 	menu default
 	kernel <%= @id %>/<%= @platform %>-installer/<%= @arch %>/linux
-	append auto=true priority=critical interface=<%= @interface %> vga16fb.modeset=0 initrd=<%= @id %>/<%= @platform %>-installer/<%= @arch %>/initrd.gz netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us keyboard-configuration/xkb-keymap=us netcfg/get_hostname=<%= @hostname %> netcfg/get_domain=<%= @domain %> netcfg/chooseinterface=auto url=http://<%= node['ipaddress'] %>/<%= @preseed %> DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5
+	append auto=true priority=critical interface=<%= @interface %> vga16fb.modeset=0 initrd=<%= @id %>/<%= @platform %>-installer/<%= @arch %>/initrd.gz netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us keyboard-configuration/xkb-keymap=us netcfg/get_hostname=<%= @hostname %> netcfg/get_domain=<%= @domain %> netcfg/chooseinterface=auto url=http://<%= @server_ipaddress %>/<%= @preseed %> DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5
 IPAPPEND 2
