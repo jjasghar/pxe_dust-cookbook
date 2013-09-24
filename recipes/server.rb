@@ -17,6 +17,10 @@
 # limitations under the License.
 #
 
+class ::Chef::Recipe
+  include ::PXEdust
+end
+
 include_recipe 'tftp::server'
 include_recipe 'pxe_dust::common'
 
@@ -30,7 +34,12 @@ else
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
   if servers.length > 0
-    proxy = "d-i mirror/http/proxy string http://#{servers[0].ipaddress}:#{servers[0]['apt']['cacher_port']}"
+    if node['pxe_dust']['interface']
+      cacher_ip = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
+    else
+      cacher_ip = servers[0].ipaddress
+    end
+    proxy = "d-i mirror/http/proxy string http://#{cacher_ip}:#{servers[0]['apt']['cacher_port']}"
   else
     proxy = '#d-i mirror/http/proxy string url'
   end

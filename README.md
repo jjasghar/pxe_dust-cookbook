@@ -163,6 +163,12 @@ Attributes
 `node['pxe_dust']['chefversion']` the Chef version that pxe_dust should provide, unset by default which downloads latest
 `node['pxe_dust']['dir']` the location where apache will serve pxe_dust content, default is '/var/www/pxe_dust'
 `node['pxe_dust']['default']` attributes that may be used to override any settings provided by the `pxe_dust` data bag items
+`node['pxe_dust']['interface']` which interface to instruct PXE-booting nodes to connect to, default is `nil`. Only need to specify an interface like `eth0` if `node.ipaddress` is not working as expected.
+
+Libraries
+=========
+
+* `interface_ipaddress` -- Returns the IP address for a given node and interface.
 
 License and Author
 ==================

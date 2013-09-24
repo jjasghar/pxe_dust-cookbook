@@ -21,3 +21,4 @@
 default['pxe_dust']['chefversion'] = nil
 default['pxe_dust']['dir'] = '/var/www/pxe_dust'
 default['pxe_dust']['default'] = {}
+default['pxe_dust']['interface'] = nil
