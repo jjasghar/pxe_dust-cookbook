@@ -64,7 +64,8 @@ d-i debian-installer/exit/halt boolean <%= @halt %>
 # This will power off the machine instead of just halting it.
 #d-i debian-installer/exit/poweroff boolean true
 <% if @bootstrap -%>
-d-i preseed/late_command string in-target wget --no-proxy -O /tmp/chef-bootstrap \
-  http://<%= @server_ipaddress %>/<%= @id %>-chef-bootstrap ;\
-  chroot /target /bin/bash /tmp/chef-bootstrap
+d-i preseed/late_command string in-target wget --no-proxy -O /etc/network/interfaces http://<%= @server_ipaddress %>/<%= @id %>-interfaces; \
+  in-target ifup --all; \
+  in-target wget --no-proxy -O /root/chef-bootstrap http://<%= @server_ipaddress %>/<%= @id %>-chef-bootstrap; \
+  in-target /bin/bash /root/chef-bootstrap
 <% end -%>

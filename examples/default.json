@@ -11,5 +11,6 @@
         "fullname": "Ubuntu",
         "username": "ubuntu",
         "crypted_password": "$6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWcLKTJZ3verMFnpFbITI9.eHwZ.HR1UPeKbCAV1"
-    }
+    },
+    "interfaces": "\nauto eth0\niface eth0 inet dhcp\nauto eth1\niface eth1 inet dhcp\n"
 }

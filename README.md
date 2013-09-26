@@ -50,7 +50,8 @@ Here is an example of the default.json:
         "fullname": "Ubuntu",
         "username": "ubuntu",
         "crypted_password": "$6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWcLKTJZ3verMFnpFbITI9.eHwZ.HR1UPeKbCAV1"
-    }
+    },
+    "interfaces": "\nauto eth0\niface eth0 inet dhcp\nauto eth1\niface eth1 inet dhcp\n"
 }
 ```
 
@@ -83,6 +84,7 @@ Here are currently supported options available for inclusion in the example `def
     `username`: Username of the default user, default 'ubuntu'.
 * `root`:
     `crypted_password`: SHA512 password for the root user, default 'ubuntu'. This is used on Debian since Ubuntu does not have a root.
+* `interfaces`: Block of JSON-escaped text to insert into the `/etc/network/interfaces`. Unused if not present, the example above adds dhcp to eth0 and eth1.
 * `external_preseed`: Direct pxeboot clients to an existing (unmanaged by pxe_dust) preseed file.
 
 Additional data bag items may be used to support booting multiple operating systems. Examples of various Ubuntu and Debian installations are included in the `examples` directory. Important to note is the use of the `addresses` option to support tftp booting by MAC address (this is currently required for not using the default) and the explicit need for a `run_list` and/or an `environment` if one is to be provided.
@@ -95,15 +97,25 @@ pxelinux.cfg.erb
 
 Sets the URL to the preseed file, architecture, the domain and which interfaces to use.
 
-preseed.cfg.erb
----------------
+debian-preseed.cfg.erb/ubuntu-preseed.cfg.erb
+---------------------------------------------
 
-The preseed file is full of opinions mostly exposed via attributes, you will want to update this. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured and any additional required packages may be added to the `pxe_dust` data bag items. The preseed finishes by calling the `chef-bootstrap` script.
+Preseed files full of opinions mostly exposed via attributes, you will want to update this. There are slight differences between Debian and Ubuntu preseeds, so there are separate files. If there is a node providing an apt-cacher-ng caching proxy via `recipe[apt::cacher-ng]`, it is provided in the preseed.cfg. The initial user and password is configured and any additional required packages may be added to the `pxe_dust` data bag items. The preseed finishes by calling the `chef-bootstrap` script.
 
 chef-bootstrap.sh.erb
 ---------------------
 
 This is the `preseed/late_command` that bootstraps the node with Chef via the full stack installer.
+
+interfaces.erb
+--------------
+
+Template for replacing `/etc/network/interfaces` if necessary. Includes the loopback device.
+
+yaboot.conf.erb
+---------------
+
+Template for configuring `yaboot` for bootstrapping PXE-booted PPC machines.
 
 Recipes
 =======

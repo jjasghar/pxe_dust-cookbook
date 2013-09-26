@@ -143,6 +143,15 @@ pxe_dust.each do |id|
         )
     end
 
+    template "#{node['pxe_dust']['dir']}/#{id}-interfaces" do
+      source "interfaces.erb"
+      mode 0644
+      variables(
+        :content => image['interfaces']
+        )
+      only_if { image['interfaces'] }
+    end
+
   end
 end
 

@@ -1,6 +1,7 @@
 ## 1.7.0
 
 * [COOK-3664] multiple nics confuse pxe_dust. Added node['pxe_dust']['interface'] to solve this.
+* added support for overriding /etc/network/interfaces via the data bag
 
 ## 1.6.0
 
