@@ -77,7 +77,9 @@ Here are currently supported options available for inclusion in the example `def
     `http_proxy_pass`: HTTP proxy pass, default is none.
     `https_proxy`: HTTPS proxy, default is none.
 * `chef`: Whether or not to bootstrap the node with Chef, default is 'true'.
-* `halt`: Whether to wait for user input at end of bootstrap, default is 'false'.
+* `pause`: Whether to wait for user input at end of bootstrap, default is 'false'.
+* `halt`: Whether to halt the box at end of bootstrap, default is 'false'.
+* `poweroff`: Whether to poweroff the box at end of bootstrap, default is 'false'.
 * `user`:
     `crypted_password`: SHA512 password for the default user, default 'ubuntu'. This may be generated and added to the data bag.
     `fullname`: Full name of the default user, default 'Ubuntu'.

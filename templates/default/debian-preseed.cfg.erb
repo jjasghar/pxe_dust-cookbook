@@ -68,12 +68,14 @@ d-i passwd/root-password-crypted password <%= @root_crypted_password %>
 
 ### Finishing up the installation
 # Avoid that last message about the install being complete.
+<% unless @pause -%>
 d-i finish-install/reboot_in_progress note
+<% end -%>
 # This is how to make the installer shutdown when finished, but not
 # reboot into the installed system.
 d-i debian-installer/exit/halt boolean <%= @halt %>
 # This will power off the machine instead of just halting it.
-#d-i debian-installer/exit/poweroff boolean true
+d-i debian-installer/exit/poweroff boolean <%= @poweroff %>
 <% if @bootstrap -%>
 d-i preseed/late_command string in-target wget --no-proxy -O /etc/network/interfaces http://<%= @server_ipaddress %>/<%= @id %>-interfaces; \
   in-target ifup --all; \

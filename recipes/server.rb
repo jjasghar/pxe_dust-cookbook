@@ -21,7 +21,7 @@ class ::Chef::Recipe
   include ::PXEdust
 end
 
-include_recipe 'tftp::server'
+#include_recipe 'tftp::server'
 include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
@@ -138,7 +138,9 @@ pxe_dust.each do |id|
         :user_username => user_username,
         :user_crypted_password => user_crypted_password,
         :root_crypted_password => root_crypted_password,
+        :pause => image['pause'] || false,
         :halt => image['halt'] || false,
+        :poweroff => image['poweroff'] || false,
         :bootstrap => image['chef'] || true
         )
     end
