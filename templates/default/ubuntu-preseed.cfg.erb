@@ -65,9 +65,10 @@ d-i finish-install/reboot_in_progress note
 d-i debian-installer/exit/halt boolean <%= @halt %>
 # This will power off the machine instead of just halting it.
 d-i debian-installer/exit/poweroff boolean <%= @poweroff %>
+d-i preseed/late_command string in-target wget --no-proxy http://<%= @server_ipaddress %>/<%= @id %>-persistent-net.rules | bash; \
+  in-target wget --no-proxy -O /etc/network/interfaces http://<%= @server_ipaddress %>/<%= @id %>-interfaces; \
 <% if @bootstrap -%>
-d-i preseed/late_command string in-target wget --no-proxy -O /etc/network/interfaces http://<%= @server_ipaddress %>/<%= @id %>-interfaces; \
-  in-target ifup --all; \
-  in-target wget --no-proxy -O /root/chef-bootstrap http://<%= @server_ipaddress %>/<%= @id %>-chef-bootstrap; \
-  in-target /bin/bash /root/chef-bootstrap
+  in-target wget --no-proxy -O /etc/init.d/chef-bootstrap http://<%= @server_ipaddress %>/<%= @id %>-chef-bootstrap; \
+  in-target chmod +x /etc/init.d/chef-bootstrap; \
+  in-target update-rc.d chef-bootstrap defaults; \
 <% end -%>

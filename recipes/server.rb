@@ -22,6 +22,7 @@ class ::Chef::Recipe
 end
 
 #include_recipe 'tftp::server'
+#include_recipe 'dnsmasq'
 include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
@@ -30,7 +31,9 @@ if Chef::Config[:solo]
   proxy = '#d-i mirror/http/proxy string url'
 else
   query = "apt_caching_server:true"
-  query += " AND chef_environment:#{node.chef_environment}" if node['apt']['cacher-client']['restrict_environment']
+  if node['apt']['cacher-client'] && node['apt']['cacher-client']['restrict_environment']
+    query += " AND chef_environment:#{node.chef_environment}"
+  end
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
   if servers.length > 0
@@ -124,6 +127,7 @@ pxe_dust.each do |id|
       end
     end
 
+    # preseed file
     template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
       only_if { image['external_preseed'].nil? }
       source "#{platform}-preseed.cfg.erb"
@@ -145,11 +149,22 @@ pxe_dust.each do |id|
         )
     end
 
+    # /etc/network/interfaces
     template "#{node['pxe_dust']['dir']}/#{id}-interfaces" do
       source "interfaces.erb"
       mode 0644
       variables(
         :content => image['interfaces']
+        )
+      only_if { image['interfaces'] }
+    end
+
+    # /etc/udev/rules.d/70-persistent-net.rules
+    template "#{node['pxe_dust']['dir']}/#{id}-persistent-net.rules" do
+      source "persistent-net.rules.erb"
+      mode 0644
+      variables(
+        :interface => image['interface'] || 'eth0',
         )
       only_if { image['interfaces'] }
     end
