@@ -24,7 +24,7 @@ include_recipe 'pxe_dust::installers'
 
 #write out a new pxedust.erb template
 remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do
-  source "https://raw.github.com/opscode/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
+  source "file://#{node['chef_packages']['chef']['chef_root']}/chef/knife/bootstrap/chef-full.erb"
 end
 
 if node['pxe_dust']['interface']
