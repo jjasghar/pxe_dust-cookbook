@@ -67,5 +67,6 @@ end
 # write out the external hosts file
 file node['pxe_dust']['hosts_file'] do
   content hosts_file
+  mode 0644
   notifies :restart, resources(:service => 'dnsmasq')
 end

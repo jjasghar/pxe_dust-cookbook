@@ -22,17 +22,23 @@ require File.expand_path('../support/helpers', __FILE__)
 describe "pxe_dust_test::server" do
   include Helpers::PxeDustTest
 
-  it 'runs the apache and tftpd-hpa services' do
-    service("in.tftpd").must_be_running
+  it 'runs the dnsmasq service' do
+    service("dnsmasq").must_be_running
   end
 
   it 'creates the tftp and pxe_dust directories' do
-    directory(node['tftp']['directory']).must_exist.with(:owner, "root")
-    directory("#{node['tftp']['directory']}/pxelinux.cfg").must_exist.with(:owner, "root")
+    directory(node['dnsmasq']['dhcp']['tftp-root']).must_exist.with(:owner, node['dnsmasq']['user'])
+    directory("#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.cfg").must_exist.with(:owner, node['dnsmasq']['user'])
   end
 
   it 'creates a default pxelinux.cfg' do
-    file("#{node['tftp']['directory']}/pxelinux.cfg/default").must_include node['pxe_dust']['default']['domain']
+    file("#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.cfg/default").must_include node['pxe_dust']['default']['domain']
+  end
+
+  #dns stuff
+  it 'should have the pxe_hosts_file' do
+    file(node['pxe_dust']['hosts_file']).must_have(:mode, '644')
+    file(node['pxe_dust']['hosts_file']).must_match /^10\.0\.0\.5 pxe-10-0-0-5 pxe-10-0-0-5.test\.lab$/
   end
 
 end

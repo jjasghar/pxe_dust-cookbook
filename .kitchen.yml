@@ -4,10 +4,10 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: ubuntu-12.04
+- name: debian-7.1
   driver_config:
-    box: opscode-ubuntu-12.04
-    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box
+    box: opscode-debian-7.1
+    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_debian-7.1.0_provisionerless.box
   run_list:
   - recipe[apt]
 
@@ -18,12 +18,12 @@ platforms:
   run_list:
   - recipe[apt]
 
-# - name: debian-7.1.0
-#   driver_config:
-#     box: opscode-debian-7.1.0
-#     box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_debian-7.1.0_provisionerless.box
-#   run_list:
-#   - recipe[apt]
+- name: ubuntu-12.04
+  driver_config:
+    box: opscode-ubuntu-12.04
+    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box
+  run_list:
+  - recipe[apt]
 
 - name: ubuntu-13.04
   driver_config:
@@ -46,6 +46,13 @@ suites:
     pxe_dust:
       default:
         domain: "testing.pxe"
+    dnsmasq:
+      dhcp_options: ['dhcp-host=01:23:ab:cd:01:02,larry,10.0.0.10']
+      dhcp:
+        dhcp-range: 'eth1,10.0.0.5,10.0.0.15,12h'
+        domain: 'test.lab'
+        tftp-root: '/var/lib/tftpboot'
+      enable_dhcp: true
 
 - name: installers
   run_list:
