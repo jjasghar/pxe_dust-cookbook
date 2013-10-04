@@ -22,7 +22,7 @@ require File.expand_path('../support/helpers', __FILE__)
 describe "pxe_dust_test::common" do
   include Helpers::PxeDustTest
 
-  it 'runs the apache and tftpd-hpa services' do
+  it 'runs the apache service' do
     service("apache2").must_be_running
   end
 
