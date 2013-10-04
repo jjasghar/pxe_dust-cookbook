@@ -17,4 +17,15 @@
 # limitations under the License.
 #
 
+node.default['pxe_dust']['default']['domain'] = 'testing.pxe'
+node.default['dnsmasq']['enable_dhcp'] = true
+
+node.default['dnsmasq']['dhcp'] = {
+  'dhcp-range' => 'eth1,10.0.0.5,10.0.0.15,12h',
+  'domain' => 'test.lab',
+  'tftp-root' => '/var/lib/tftpboot'
+}
+
+node.default['dnsmasq']['dhcp_options'] = ['dhcp-host=01:23:ab:cd:01:02,larry,10.0.0.10']
+
 include_recipe "pxe_dust::server"
