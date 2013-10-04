@@ -1,7 +1,11 @@
-## 1.7.0
+## 2.0.0
 
-* [COOK-3664] multiple nics confuse pxe_dust. Added node['pxe_dust']['interface'] to solve this.
+* switch from the `tftp` cookbook to the `dnsmasq` cookbook to provide DHCP and TFTP
+* add `dns` recipe for managing names of pxe-booted machines
 * added support for overriding /etc/network/interfaces via the data bag
+* move the Chef bootstrap to the node's first boot
+* [COOK-3664] multiple nics confuse pxe_dust. Added node['pxe_dust']['interface'] to solve this.
+* support using the proper apt-cacher-ng interface per COOK-3707
 
 ## 1.6.0
 
