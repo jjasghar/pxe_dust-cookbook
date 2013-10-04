@@ -44,7 +44,7 @@ end
 node.override['dnsmasq']['dhcp_options'] = node['dnsmasq']['dhcp_options'].to_a << "addn-hosts=#{node['pxe_dust']['hosts_file']}"
 
 # pull out the DHCP range and write out a supplemental pxe_dust hosts file for it
-hosts_file = "# Generated file managed by Chef\n"
+hosts_file = "# Generated file managed by Chef\n\n"
 if node['dnsmasq']['dhcp']['dhcp-range']
   range = node['dnsmasq']['dhcp']['dhcp-range'].split(',')
   range.each_index do |i|
@@ -56,7 +56,7 @@ if node['dnsmasq']['dhcp']['dhcp-range']
         # remove any allocated IPs from the hosts file
         unless node['dnsmasq']['dhcp_options'].find_index {|m| m.end_with?(ip)}
           host_name = "pxe-"+ip.gsub(/\./, '-')
-          hosts_file += "\n#{ip} #{host_name} #{host_name}.#{default['domain']}"
+          hosts_file += "#{ip} #{host_name} #{host_name}.#{default['domain']}\n"
         end
       end
       break

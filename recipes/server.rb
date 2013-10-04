@@ -21,6 +21,7 @@ class ::Chef::Recipe
   include ::Apt
 end
 
+include_recipe "dnsmasq::default"
 include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
@@ -201,4 +202,3 @@ include_recipe "pxe_dust::installers"
 #generate local mirror install.sh and bootstrap templates
 include_recipe "pxe_dust::bootstrap_template"
 include_recipe "pxe_dust::dns"
-include_recipe 'dnsmasq'

@@ -38,7 +38,8 @@ describe "pxe_dust_test::server" do
   #dns stuff
   it 'should have the pxe_hosts_file' do
     file(node['pxe_dust']['hosts_file']).must_have(:mode, '644')
-    file(node['pxe_dust']['hosts_file']).must_match /^10\.0\.0\.5 pxe-10-0-0-5 pxe-10-0-0-5.test\.lab$/
+    file(node['pxe_dust']['hosts_file']).must_match /^10.0.0.5 pxe-10-0-0-5 pxe-10-0-0-5.testing.pxe$/
+    file(node['pxe_dust']['hosts_file']).wont_match /^10.0.0.10 pxe-10-0-0-10 pxe-10-0-0-10.test.pxe$/
   end
 
 end
