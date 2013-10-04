@@ -18,11 +18,9 @@
 #
 
 class ::Chef::Recipe
-  include ::PXEdust
+  include ::Apt
 end
 
-#include_recipe 'tftp::server'
-#include_recipe 'dnsmasq'
 include_recipe 'pxe_dust::common'
 
 #search for any apt-cacher-ng caching proxies
@@ -37,8 +35,8 @@ else
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
   if servers.length > 0
-    if node['pxe_dust']['interface']
-      cacher_ipaddress = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
+    if servers[0]['apt']['cacher_interface']
+      cacher_ipaddress = interface_ipaddress(servers[0], node['apt']['cacher_interface'])
     else
       cacher_ipaddress = servers[0].ipaddress
     end
@@ -48,7 +46,8 @@ else
   end
 end
 
-directory "#{node['tftp']['directory']}/pxelinux.cfg" do
+directory "#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.cfg" do
+  owner node['dnsmasq']['user']
   mode 0755
 end
 
@@ -68,7 +67,7 @@ rescue
   pxe_dust = []
 end
 pxe_dust.each do |id|
-  image_dir = "#{node['tftp']['directory']}/#{id}"
+  image_dir = "#{node['dnsmasq']['dhcp']['tftp-root']}/#{id}"
   # override the defaults with the image values, then override those with node values
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
@@ -87,6 +86,7 @@ pxe_dust.each do |id|
     end
 
     directory image_dir do
+      owner node['dnsmasq']['user']
       mode 0755
     end
 
@@ -99,19 +99,21 @@ pxe_dust.each do |id|
     #populate the netboot contents
     execute "tar -xzf #{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-netboot.tar.gz" do
       cwd image_dir
+      user node['dnsmasq']['user']
       not_if { Dir.entries(image_dir).length > 2 }
     end
 
-    link "#{node['tftp']['directory']}/pxe-#{id}.0" do
+    link "#{node['dnsmasq']['dhcp']['tftp-root']}/pxe-#{id}.0" do
       to "#{id}/pxelinux.0"
+      owner node['dnsmasq']['user']
     end
 
     if image['addresses']
-      image['addresses'].keys.each do |mac_address|
-        mac = mac_address.gsub(/:/, '-')
-        mac.downcase!
-        template "#{node['tftp']['directory']}/pxelinux.cfg/01-#{mac}" do
+      image['addresses'].each do |mac_address, hostname|
+        mac = mac_address.downcase.gsub(/:/, '-')
+        template "#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.cfg/01-#{mac}" do
           source 'pxelinux.cfg.erb'
+          owner node['dnsmasq']['user']
           mode 0644
           variables(
             :server_ipaddress => server_ipaddress,
@@ -120,7 +122,7 @@ pxe_dust.each do |id|
             :interface => image['interface'] || 'eth0',
             :arch => arch || 'amd64',
             :domain => image['domain'],
-            :hostname => image['addresses'][mac_address],
+            :hostname => hostname.downcase,
             :preseed => image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
             )
         end
@@ -173,13 +175,15 @@ pxe_dust.each do |id|
 end
 
 #configure the defaults
-link "#{node['tftp']['directory']}/pxelinux.0" do
+link "#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.0" do
   to 'default/pxelinux.0'
+  owner node['dnsmasq']['user']
 end
 
-template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
+template "#{node['dnsmasq']['dhcp']['tftp-root']}/pxelinux.cfg/default"  do
   source 'pxelinux.cfg.erb'
-  mode '0644'
+  owner node['dnsmasq']['user']
+  mode 0644
   variables(
     :server_ipaddress => server_ipaddress,
     :platform => default['platform'] || '12.04',
@@ -196,3 +200,5 @@ end
 include_recipe "pxe_dust::installers"
 #generate local mirror install.sh and bootstrap templates
 include_recipe "pxe_dust::bootstrap_template"
+include_recipe "pxe_dust::dns"
+include_recipe 'dnsmasq'

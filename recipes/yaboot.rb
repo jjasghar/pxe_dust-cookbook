@@ -29,8 +29,8 @@ else
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
   if servers.length > 0
-    if node['pxe_dust']['interface']
-      cacher_ipaddress = interface_ipaddress(servers[0], node['pxe_dust']['interface'])
+    if servers[0]['apt']['cacher_interface']
+      cacher_ipaddress = interface_ipaddress(servers[0], node['apt']['cacher_interface'])
     else
       cacher_ipaddress = servers[0].ipaddress
     end
@@ -57,7 +57,7 @@ rescue
 end
 
 pxe_dust.each do |id|
-  image_dir = "#{node['tftp']['directory']}/#{id}"
+  image_dir = "#{node['dnsmasq']['dhcp']['tftp-root']}/#{id}"
   # override the defaults with the image values, then override those with node values
   image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
 
@@ -81,6 +81,12 @@ pxe_dust.each do |id|
       action :create_if_missing
     end
 
+    directory "#{image_dir}" do
+      owner node['dnsmasq']['user']
+      mode 0755
+      recursive true
+    end
+
     # target dir
     directory "#{image_dir}/iso" do
       mode 0755
@@ -98,13 +104,15 @@ pxe_dust.each do |id|
     # populate the target with iso/install contents
     ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
       execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/#{ifile}" do
+        user node['dnsmasq']['user']
         not_if { File.exists?("#{image_dir}/#{ifile}") }
       end
     end
 
     # get the yaboot
-    execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/yaboot" do
-      not_if { File.exists?("#{node['tftp']['directory']}/yaboot") }
+    execute "cp #{image_dir}/iso/install/yaboot #{node['dnsmasq']['dhcp']['tftp-root']}/yaboot" do
+      user node['dnsmasq']['user']
+      not_if { File.exists?("#{node['dnsmasq']['dhcp']['tftp-root']}/yaboot") }
     end
 
     # umount iso
@@ -119,8 +127,9 @@ pxe_dust.each do |id|
       image['addresses'].keys.each do |mac_address|
         mac = mac_address.gsub(/:/, '-')
         mac.downcase!
-        template "#{node['tftp']['directory']}/yaboot.conf" do
+        template "#{node['dnsmasq']['dhcp']['tftp-root']}/yaboot.conf" do
           source 'yaboot.conf.erb'
+          owner node['dnsmasq']['user']
           mode 0644
           variables(
             :server_ipaddress => server_ipaddress,
