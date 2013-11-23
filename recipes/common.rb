@@ -27,6 +27,10 @@ directory "#{node['pxe_dust']['dir']}/isos" do
   mode 0755
 end
 
+directory node['dnsmasq']['dhcp']['tftp-root'] do
+  mode 0755
+end
+
 web_app 'pxe_dust' do
   cookbook 'apache2'
   server_name node['hostname']
