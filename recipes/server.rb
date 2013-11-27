@@ -17,6 +17,10 @@
 # limitations under the License.
 #
 
+class ::Chef::Recipe
+  include ::PxeDust::Helper
+end
+
 include_recipe 'tftp::server'
 include_recipe 'pxe_dust::common'
 
@@ -41,18 +45,13 @@ directory "#{node['tftp']['directory']}/pxelinux.cfg" do
 end
 
 #loop over the other data bag items here
-begin
-  default = node['pxe_dust']['default']
-  pxe_dust = data_bag('pxe_dust')
-  default = data_bag_item('pxe_dust', 'default').merge(default)
-rescue
-  Chef::Log.warn("No 'pxe_dust' data bag found.")
-  pxe_dust = []
-end
+pxe_dust = pxe_models
+default = pxe_default_model
+
 pxe_dust.each do |id|
   image_dir = "#{node['tftp']['directory']}/#{id}"
   # override the defaults with the image values, then override those with node values
-  image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
+  image = pxe_model_merged(id)
 
   platform = image['platform']
   arch = image['arch']

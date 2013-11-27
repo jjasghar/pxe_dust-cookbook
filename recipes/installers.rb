@@ -19,6 +19,10 @@
 
 require 'net/http'
 
+class ::Chef::Recipe
+  include ::PxeDust::Helper
+end
+
 include_recipe 'pxe_dust::common'
 
 #location of the full stack installers
@@ -27,17 +31,11 @@ directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
 end
 
 #loop over the other data bag items here
-begin
-  default = node['pxe_dust']['default']
-  pxe_dust = data_bag('pxe_dust')
-  default = data_bag_item('pxe_dust', 'default').merge(default)
-rescue
-  Chef::Log.warn("No 'pxe_dust' data bag found.")
-  pxe_dust = []
-end
-pxe_dust.each do |id|
-  image = default.merge(data_bag_item('pxe_dust', id)).merge(node['pxe_dust']['default'])
+default = pxe_default_model
+pxe_dust = pxe_models
 
+pxe_dust.each do |id|
+  image = pxe_model_merged(id)
   platform = image['platform']
   arch = image['arch']
   version = image['version']
@@ -81,19 +79,16 @@ pxe_dust.each do |id|
     installer = "chef_#{node['pxe_dust']['chefversion']}-0.#{platform}.#{version}_#{rel_arch}.deb"
   else
     #for getting latest version of full stack installers
-    Net::HTTP.start('www.opscode.com') do |http|
-      Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-      response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
-      Chef::Log.debug("Code = #{response.code}")
-      location = response['location']
-      Chef::Log.info("Omnitruck URL: #{location}")
-      installer = location.split('/').last
-      Chef::Log.debug("Omnitruck installer: #{installer}")
-    end
+     remote_path = OmnibusTrucker.build_url(
+        :version => node['pxe_dust']['chefversion'],
+        :platform => platform,
+        :plateform_version => version,
+        :machine => arch
+      )
 
     #download the full stack installer
     remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
-      source location
+      source remote_path
       mode 0644
       action :create_if_missing
     end
