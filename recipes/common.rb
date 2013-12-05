@@ -31,9 +31,15 @@ directory node['dnsmasq']['dhcp']['tftp-root'] do
   mode 0755
 end
 
+if node['pxe_dust']['interface']
+  server_ipaddress = interface_ipaddress(node, node['pxe_dust']['interface'])
+else
+  server_ipaddress = node.ipaddress
+end
+
 web_app 'pxe_dust' do
   cookbook 'apache2'
-  server_name node['hostname']
+  server_name server_ipaddress
   server_aliases [node['fqdn']]
   directory_options ['Indexes', 'FollowSymLinks']
   docroot node['pxe_dust']['dir']
