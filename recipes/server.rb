@@ -57,6 +57,7 @@ if node['pxe_dust']['interface']
 else
   server_ipaddress = node.ipaddress
 end
+server_ipaddress += ":#{node['pxe_dust']['port']}"
 
 #loop over the other data bag items here
 begin

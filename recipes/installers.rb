@@ -22,7 +22,7 @@ require 'net/http'
 include_recipe 'pxe_dust::common'
 
 #location of the full stack installers
-directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
+directory "#{node['pxe_dust']['dir']}/chef-full-stack" do
   mode '0755'
 end
 
@@ -31,6 +31,7 @@ if node['pxe_dust']['interface']
 else
   server_ipaddress = node.ipaddress
 end
+server_ipaddress += ":#{node['pxe_dust']['port']}"
 
 #loop over the other data bag items here
 begin
@@ -76,7 +77,7 @@ pxe_dust.each do |id|
     release = "debian-6.0.1-#{rel_arch}"
   end
 
-  directory "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}" do
+  directory "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}" do
     mode 0755
   end
 
@@ -99,7 +100,7 @@ pxe_dust.each do |id|
     end
 
     #download the full stack installer
-    remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
+    remote_file "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}/#{installer}" do
       source location
       mode 0644
       action :create_if_missing

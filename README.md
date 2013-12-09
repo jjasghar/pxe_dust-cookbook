@@ -202,6 +202,7 @@ Attributes
 `['pxe_dust']['default']` attributes that may be used to override any settings provided by the `pxe_dust` data bag items
 `['pxe_dust']['hosts_file']` the supplemental hosts file used by dnsmasq for the PXE-booted machines, default is '/etc/hosts_pxe_dust'
 `['pxe_dust']['interface']` which interface to instruct PXE-booting nodes to connect to, default is `nil`. Only need to specify an interface like `eth0` if `node.ipaddress` is not working as expected.
+`['pxe_dust']['port']` which port to instruct PXE-booting nodes to connect to, default is `9630`.
 
 License and Author
 ==================

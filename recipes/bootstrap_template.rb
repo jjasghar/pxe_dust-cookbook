@@ -32,6 +32,7 @@ if node['pxe_dust']['interface']
 else
   server_ipaddress = node.ipaddress
 end
+server_ipaddress += ":#{node['pxe_dust']['port']}"
 
 # change URL from
 # url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
@@ -62,11 +63,11 @@ end
 # change URL from
 # url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
-# url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
+# url="http://hypnotoad/chef-full-stack/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "install.sh url" do
   block do
     sed = "sed 's/https:\\/\\/opscode.com\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
-    sed += "http:\\/\\/#{server_ipaddress}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
+    sed += "http:\\/\\/#{server_ipaddress}\\/chef-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " #{node['pxe_dust']['dir']}/original-install.sh"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)
@@ -83,7 +84,7 @@ end
 #straighten up symlinks for downloading from install.sh
 ruby_block "create symlinks that match up with the urls" do
   block do
-    Dir.glob("#{node['pxe_dust']['dir']}/opscode-full-stack/*").each do |distro|
+    Dir.glob("#{node['pxe_dust']['dir']}/chef-full-stack/*").each do |distro|
       if File.directory?(distro) && !File.symlink?(distro)
         packages = Dir.glob("#{distro}/chef_*")
         versions = []

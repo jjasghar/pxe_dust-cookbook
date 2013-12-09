@@ -7,6 +7,8 @@
 * [COOK-3664] multiple nics confuse pxe_dust. Added node['pxe_dust']['interface'] to solve this.
 * support using the proper apt-cacher-ng interface per COOK-3707
 * added a PXE boot menu to remove need to switch the BIOS settings off of network boot
+* ['pxe_dust']['port'] to free up 80, default to 9630
+* move opscode directory references to chef
 
 ## 1.6.0
 

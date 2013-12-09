@@ -36,6 +36,9 @@ if node['pxe_dust']['interface']
 else
   server_ipaddress = node.ipaddress
 end
+server_ipaddress += ":#{node['pxe_dust']['port']}"
+
+node.override['apache']['listen_ports'] = [node['pxe_dust']['port']]
 
 web_app 'pxe_dust' do
   cookbook 'apache2'
