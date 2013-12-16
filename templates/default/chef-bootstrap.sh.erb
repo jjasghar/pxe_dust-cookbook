@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -f /usr/bin/chef-client ]; then
-   wget -q -O /tmp/<%= @installer %> http://<%= @server_ipaddress %>/opscode-full-stack/<%= @release %>/<%= @installer %>
+   wget -q -O /tmp/<%= @installer %> http://<%= @server_ipaddress %>/chef-full-stack/<%= @release %>/<%= @installer %>
    dpkg -i /tmp/<%= @installer %>
 fi
 
@@ -11,8 +11,8 @@ cat > /etc/chef/client.rb <<EOF
 log_level        :info
 log_location     STDOUT
 
-chef_server_url  '<%= Chef::Config[:chef_server_url] %>'
-validation_client_name '<%= Chef::Config[:validation_client_name] %>'
+chef_server_url  '<%= @chef_server_url %>'
+validation_client_name '<%= @validation_client_name %>'
 
 <% if @http_proxy %>http_proxy 'http://<%= @http_proxy %>'<% end %>
 <% if @https_proxy %>http_proxy 'https://<%= @https_proxy %>'<% end %>
@@ -26,7 +26,9 @@ cat > /etc/chef/first-boot.json <<EOF
 }
 EOF
 
-wget -O /etc/chef/validation.pem http://<%= @server_ipaddress %>/validation.pem
+wget -O /etc/chef/validation.pem http://<%= @server_ipaddress %>/<%= @validation_client_name %>.pem
+
+sleep 60
 
 /usr/bin/chef-client<% if @environment %> -E <%= @environment %><% end %> -j /etc/chef/first-boot.json
 

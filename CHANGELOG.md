@@ -9,6 +9,7 @@
 * added a PXE boot menu to remove need to switch the BIOS settings off of network boot
 * ['pxe_dust']['port'] to free up 80, default to 9630
 * move opscode directory references to chef
+* added ['pxe_dust'] attributes 'chef_server_url', 'validation_client_name' and 'validation_key' for using another Chef server and credentials from the pxe_dust server
 
 ## 1.6.0
 

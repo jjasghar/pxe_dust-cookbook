@@ -24,3 +24,6 @@ default['pxe_dust']['dir'] = '/var/www/pxe_dust'
 default['pxe_dust']['hosts_file'] = '/etc/hosts_pxe_dust'
 default['pxe_dust']['interface'] = nil
 default['pxe_dust']['port'] = 9630
+default['pxe_dust']['chef_server_url'] = Chef::Config[:chef_server_url]
+default['pxe_dust']['validation_client_name'] = Chef::Config[:validation_client_name]
+default['pxe_dust']['validation_key'] = Chef::Config[:validation_key]

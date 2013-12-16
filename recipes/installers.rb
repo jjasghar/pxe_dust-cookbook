@@ -123,6 +123,9 @@ pxe_dust.each do |id|
       :http_proxy_user => http_proxy_user,
       :http_proxy_pass => http_proxy_pass,
       :https_proxy => https_proxy,
+      :chef_server_url => node['pxe_dust']['chef_server_url'],
+      :validation_client_name => node['pxe_dust']['validation_client_name'],
+      :validation_key => node['pxe_dust']['validation_key'],
       :environment => image['environment'],
       :run_list => run_list
       )
@@ -131,10 +134,11 @@ pxe_dust.each do |id|
 end
 
 #link the validation_key where it can be downloaded
-file Chef::Config[:validation_key] do
+file node['pxe_dust']['validation_key'] do
   mode 0644
 end
 
-link "#{node['pxe_dust']['dir']}/validation.pem" do
-  to Chef::Config[:validation_key]
+link "#{node['pxe_dust']['dir']}/#{node['pxe_dust']['validation_client_name']}.pem" do
+  to node['pxe_dust']['validation_key']
 end
+

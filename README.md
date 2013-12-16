@@ -203,6 +203,9 @@ Attributes
 `['pxe_dust']['hosts_file']` the supplemental hosts file used by dnsmasq for the PXE-booted machines, default is '/etc/hosts_pxe_dust'
 `['pxe_dust']['interface']` which interface to instruct PXE-booting nodes to connect to, default is `nil`. Only need to specify an interface like `eth0` if `node.ipaddress` is not working as expected.
 `['pxe_dust']['port']` which port to instruct PXE-booting nodes to connect to, default is `9630`.
+`['pxe_dust']['chef_server_url']` the Chef server for provisioned machines, default is `Chef::Config[:chef_server_url]`
+`['pxe_dust']['validation_client_name']` the client validation key name, default is `Chef::Config[:validation_client_name]`
+`['pxe_dust']['validation_key']` the validation key file, default is `Chef::Config[:validation_key]`
 
 License and Author
 ==================
