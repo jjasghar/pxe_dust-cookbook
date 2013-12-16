@@ -22,7 +22,7 @@ require File.expand_path('../support/helpers', __FILE__)
 describe "pxe_dust_test::installers" do
   include Helpers::PxeDustTest
 
-  it 'creates the opscode-full-stack' do
-    directory("#{node['pxe_dust']['dir']}/opscode-full-stack").must_exist.with(:owner, "root")
+  it 'creates the chef-full-stack' do
+    directory("#{node['pxe_dust']['dir']}/chef-full-stack").must_exist.with(:owner, "root")
   end
 end
