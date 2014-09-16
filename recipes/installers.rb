@@ -64,6 +64,8 @@ pxe_dust.each do |id|
     release = "ubuntu-12.04-#{rel_arch}"
   when /^13\./
     release = "ubuntu-13.04-#{rel_arch}"
+  when /^14\./
+    release = "ubuntu-14.04-#{rel_arch}"
   when /^6\.|^7\./
     version = '6'
     release = "debian-6.0.1-#{rel_arch}"
@@ -81,7 +83,7 @@ pxe_dust.each do |id|
     installer = "chef_#{node['pxe_dust']['chefversion']}-0.#{platform}.#{version}_#{rel_arch}.deb"
   else
     #for getting latest version of full stack installers
-    Net::HTTP.start('www.opscode.com') do |http|
+    Net::HTTP.start('www.getchef.com') do |http|
       Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
       response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
       Chef::Log.debug("Code = #{response.code}")
