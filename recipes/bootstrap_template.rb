@@ -28,12 +28,12 @@ remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do
 end
 
 # change URL from
-# url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
+# url="http://www.chef.io/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
 # url="http://hypnotoad/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "template url" do
   block do
-    sed = "sed 's/https:\\/\\/www.opscode.com\\/chef\\//"
+    sed = "sed 's/https:\\/\\/www.chef.io\\/chef\\//"
     sed += "http:\\/\\/#{node['ipaddress']}\\/#{node['hostname']}-/'"
     sed += " #{node['pxe_dust']['dir']}/chef-full.erb"
     Chef::Log.debug sed
@@ -50,16 +50,16 @@ end
 
 #write out a new install.sh
 remote_file "#{node['pxe_dust']['dir']}/original-install.sh" do
-  source "https://opscode.com/chef/install.sh"
+  source "https://chef.io/chef/install.sh"
 end
 
 # change URL from
-# url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
+# url="http://www.chef.io/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
 # url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "install.sh url" do
   block do
-    sed = "sed 's/https:\\/\\/opscode.com\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
+    sed = "sed 's/https:\\/\\/chef.io\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
     sed += "http:\\/\\/#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " #{node['pxe_dust']['dir']}/original-install.sh"
     Chef::Log.debug sed

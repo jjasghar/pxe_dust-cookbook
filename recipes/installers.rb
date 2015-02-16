@@ -83,7 +83,7 @@ pxe_dust.each do |id|
     installer = "chef_#{node['pxe_dust']['chefversion']}-0.#{platform}.#{version}_#{rel_arch}.deb"
   else
     #for getting latest version of full stack installers
-    Net::HTTP.start('www.getchef.com') do |http|
+    Net::HTTP.start('www.chef.io') do |http|
       Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
       response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
       Chef::Log.debug("Code = #{response.code}")
