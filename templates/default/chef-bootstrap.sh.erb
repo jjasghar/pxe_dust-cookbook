@@ -1,6 +1,6 @@
 . /etc/profile
 if [ ! -f /usr/bin/chef-client ]; then
-   wget -q -O /tmp/<%= @installer %> http://<%= node['ipaddress'] %>/opscode-full-stack/<%= @release %>/<%= @installer %>
+   wget -q -O /tmp/<%= @installer %> http://<%= node['ipaddress'] %>/chef-full-stack/<%= @release %>/<%= @installer %>
    dpkg -i /tmp/<%= @installer %>
 fi
 
