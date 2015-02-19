@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
+# Author:: Matt Ray <matt@chef.io>
 # Cookbook Name:: pxe_dust
 # Recipe:: bootstrap_template
 #
-# Copyright 2012-2013, Opscode, Inc
+# Copyright 2012-2013, Chef Software, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,16 +24,16 @@ include_recipe 'pxe_dust::installers'
 
 #write out a new pxedust.erb template
 remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do
-  source "https://raw.github.com/opscode/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
+  source "https://raw.github.com/chef/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
 end
 
 # change URL from
-# url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
+# url="http://www.chef.io/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
 # url="http://hypnotoad/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "template url" do
   block do
-    sed = "sed 's/https:\\/\\/www.opscode.com\\/chef\\//"
+    sed = "sed 's/https:\\/\\/www.chef.io\\/chef\\//"
     sed += "http:\\/\\/#{node['ipaddress']}\\/#{node['hostname']}-/'"
     sed += " #{node['pxe_dust']['dir']}/chef-full.erb"
     Chef::Log.debug sed
@@ -50,17 +50,17 @@ end
 
 #write out a new install.sh
 remote_file "#{node['pxe_dust']['dir']}/original-install.sh" do
-  source "https://opscode.com/chef/install.sh"
+  source "https://chef.io/chef/install.sh"
 end
 
 # change URL from
-# url="http://www.opscode.com/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
+# url="http://www.chef.io/chef/download?v=${version}&p=${platform}&pv=${platform_version}&m=${machine}"
 # to
-# url="http://hypnotoad/opscode-full-stack/${platform}-${platform_version}-${machine}/${filename}"
+# url="http://hypnotoad/chef-full-stack/${platform}-${platform_version}-${machine}/${filename}"
 ruby_block "install.sh url" do
   block do
-    sed = "sed 's/https:\\/\\/opscode.com\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
-    sed += "http:\\/\\/#{node['ipaddress']}\\/opscode-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
+    sed = "sed 's/https:\\/\\/chef.io\\/chef\\/download?v=${version}&prerelease=${prerelease}&p=${platform}&pv=${platform_version}&m=${machine}/"
+    sed += "http:\\/\\/#{node['ipaddress']}\\/chef-full-stack\\/${platform}-${platform_version}-${machine}\\/${filename}/'"
     sed += " #{node['pxe_dust']['dir']}/original-install.sh"
     Chef::Log.debug sed
     cmd = Mixlib::ShellOut.new(sed)
@@ -77,7 +77,7 @@ end
 #straighten up symlinks for downloading from install.sh
 ruby_block "create symlinks that match up with the urls" do
   block do
-    Dir.glob("#{node['pxe_dust']['dir']}/opscode-full-stack/*").each do |distro|
+    Dir.glob("#{node['pxe_dust']['dir']}/chef-full-stack/*").each do |distro|
       if File.directory?(distro) && !File.symlink?(distro)
         packages = Dir.glob("#{distro}/chef_*")
         versions = []
