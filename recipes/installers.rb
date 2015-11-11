@@ -1,8 +1,8 @@
-# Author:: Matt Ray <matt@opscode.com>
+# Author:: Matt Ray <matt@chef.io>
 # Cookbook Name:: pxe_dust
 # Recipe:: installers
 #
-# Copyright 2012-2013 Opscode, Inc
+# Copyright 2012-2013 Chef Software, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ require 'net/http'
 include_recipe 'pxe_dust::common'
 
 #location of the full stack installers
-directory "#{node['pxe_dust']['dir']}/opscode-full-stack" do
+directory "#{node['pxe_dust']['dir']}/chef-full-stack" do
   mode '0755'
 end
 
@@ -71,7 +71,7 @@ pxe_dust.each do |id|
     release = "debian-6.0.1-#{rel_arch}"
   end
 
-  directory "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}" do
+  directory "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}" do
     mode 0755
   end
 
@@ -94,7 +94,7 @@ pxe_dust.each do |id|
     end
 
     #download the full stack installer
-    remote_file "#{node['pxe_dust']['dir']}/opscode-full-stack/#{release}/#{installer}" do
+    remote_file "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}/#{installer}" do
       source location
       mode 0644
       action :create_if_missing

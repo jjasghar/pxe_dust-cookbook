@@ -31,7 +31,7 @@ DO NOT USE `chef-client::delete-validator` in conjunction with this cookbook, si
 pxe_dust Data Bag
 =================
 
-In order to manage configuration of machines registering themselves with their Chef Server or Opscode Hosted Chef, we will use the `pxe_dust` data bag.
+In order to manage configuration of machines registering themselves with their Chef Server or Chef Software Hosted Chef, we will use the `pxe_dust` data bag.
 
 ```
 % knife data bag create pxe_dust
@@ -169,10 +169,10 @@ License and Author
 
 |                      |                                        |
 |:---------------------|:---------------------------------------|
-| **Author**           | Matt Ray (<matt@opscode.com>)          |
-| **Author**           | Joshua Timberman <joshua@opscode.com>  |
+| **Author**           | Matt Ray (<matt@chef.io>)          |
+| **Author**           | Joshua Timberman <joshua@chef.io>  |
 |                      |                                        |
-| **Copyright**        | Copyright (c) 2011-2013, Opscode, Inc. |
+| **Copyright**        | Copyright (c) 2011-2013, Chef Software, Inc. |
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
