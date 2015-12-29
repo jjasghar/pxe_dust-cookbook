@@ -3,6 +3,9 @@ driver_plugin: vagrant
 driver_config:
   require_chef_omnibus: true
 
+provisioner:
+  name: chef_zero
+
 platforms:
 - name: ubuntu-12.04
   driver_config:
@@ -11,24 +14,10 @@ platforms:
   run_list:
   - recipe[apt]
 
-- name: ubuntu-10.04
+- name: ubuntu-14.04
   driver_config:
-    box: opscode-ubuntu-10.04
-    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-10.04_provisionerless.box
-  run_list:
-  - recipe[apt]
-
-# - name: debian-7.1.0
-#   driver_config:
-#     box: opscode-debian-7.1.0
-#     box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_debian-7.1.0_provisionerless.box
-#   run_list:
-#   - recipe[apt]
-
-- name: ubuntu-13.04
-  driver_config:
-    box: opscode-ubuntu-13.04
-    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-13.04_provisionerless.box
+    box: opscode-ubuntu-14.04
+    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-14.04_provisionerless.box
   run_list:
   - recipe[apt]
 
@@ -42,6 +31,7 @@ suites:
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::server]
+  data_bags_path: "examples/"
   attributes:
     pxe_dust:
       default:
@@ -56,4 +46,3 @@ suites:
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::bootstrap_template]
-

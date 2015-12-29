@@ -1,3 +1,15 @@
+## 2.0.0
+
+* Updated test-kitchen to use chef_zero
+* Changed Berksfile to be `source`
+* Updated location for the `chef-full.erb` bootstrap template
+* Updated the server_test minitest to look for apache, added serverspec for in.tftp
+* Created `examples/pxe_dust/` to have databag for integration testing
+* Updated `default.json` from the above for 14.04
+* Added serverspec tests for integration testing
+* Other random updates for 14.04 updates
+* Removed 10.04/13.04 support
+
 ## 1.6.0
 
 * yaboot recipe for pxe booting PPC machines

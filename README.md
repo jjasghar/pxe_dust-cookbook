@@ -15,9 +15,8 @@ Requires Chef 10.12 or later since it now uses the full-chef installer.
 ## Platform:
 
 Please refer to the [TESTING file](TESTING.md) to see the currently (and passing) tested platforms. The release was tested on:
-* Ubuntu 10.04
 * Ubuntu 12.04
-* Ubuntu 13.04
+* Ubuntu 14.04
 * Debian 6.0-7.1 (have with manual testing)
 
 ## Cookbooks:
@@ -45,7 +44,7 @@ Here is an example of the default.json:
     "id": "default",
     "platform": "ubuntu",
     "arch": "amd64",
-    "version": "12.04",
+    "version": "14.04",
     "user": {
         "fullname": "Ubuntu",
         "username": "ubuntu",
@@ -169,10 +168,11 @@ License and Author
 
 |                      |                                        |
 |:---------------------|:---------------------------------------|
+| **Author**           | JJ Asghar (<jj@chef.io>)          |
 | **Author**           | Matt Ray (<matt@chef.io>)          |
 | **Author**           | Joshua Timberman <joshua@chef.io>  |
 |                      |                                        |
-| **Copyright**        | Copyright (c) 2011-2013, Chef Software, Inc. |
+| **Copyright**        | Copyright (c) 2011-2016, Chef Software, Inc. |
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
