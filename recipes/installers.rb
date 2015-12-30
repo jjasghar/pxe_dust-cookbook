@@ -69,6 +69,9 @@ pxe_dust.each do |id|
   when /^6\.|^7\./
     version = '6'
     release = "debian-6.0.1-#{rel_arch}"
+  when /^8\./
+    version = '8'
+    release = "debian-8.2.0-#{rel_arch}"
   end
 
   directory "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}" do
@@ -123,7 +126,10 @@ pxe_dust.each do |id|
 
 end
 
-#link the validation_key where it can be downloaded
-link "#{node['pxe_dust']['dir']}/validation.pem" do
-  to Chef::Config[:validation_key]
+# Converting from a link because it's unreadable from apache
+validation = Chef::Config[:validation_key]
+
+file "#{node['pxe_dust']['dir']}/validation.pem" do
+  content IO.read(validation)
+  action :create
 end

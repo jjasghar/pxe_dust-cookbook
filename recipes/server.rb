@@ -138,7 +138,7 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
   source 'pxelinux.cfg.erb'
   mode '0644'
   variables(
-    :platform => default['platform'] || '12.04',
+    :platform => default['platform'] || '14.04',
     :id => 'default',
     :interface => default['interface'] || 'auto',
     :arch => default['arch'] || 'amd64',
