@@ -9,6 +9,7 @@
 * Added serverspec tests for integration testing
 * Other random updates for 14.04 updates
 * Removed 10.04/13.04 support
+* Added dhcpd server recipe
 
 ## 1.6.0
 

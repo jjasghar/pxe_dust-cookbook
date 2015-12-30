@@ -3,7 +3,7 @@
 # Cookbook Name:: pxe_dust
 # Attributes:: default
 #
-# Copyright 2011-2013 Chef Software, Inc
+# Copyright 2011-2016 Chef Software, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,3 +21,15 @@
 default['pxe_dust']['chefversion'] = nil
 default['pxe_dust']['dir'] = '/var/www/pxe_dust'
 default['pxe_dust']['default'] = {}
+
+default['pxe_dust']['dhcpd_interface'] = 'eth1'
+default['pxe_dust']['dhcpd_subnet'] = '192.168.10.0'
+default['pxe_dust']['dhcpd_netmask'] = '255.255.255.0'
+default['pxe_dust']['dhcpd_range'] = '192.168.10.20 192.168.10.100'
+default['pxe_dust']['dhcpd_dns'] = '192.168.1.1, 8.8.8.8'
+default['pxe_dust']['dhcpd_domain'] = 'example.com'
+default['pxe_dust']['dhcpd_gateway'] = '192.168.10.1'
+default['pxe_dust']['dhcpd_broadcast'] = '192.168.10.255'
+default['pxe_dust']['dhcpd_lease_time'] = '600'
+default['pxe_dust']['dhcpd_max_lease_time'] = '7200'
+default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'

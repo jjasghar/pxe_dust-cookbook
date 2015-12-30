@@ -1,0 +1,29 @@
+# option definitions common to all supported networks...
+default-lease-time 600;
+max-lease-time 7200;
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+authoritative;
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
+allow booting;
+
+subnet <%= node['pxe_dust']['dhcpd_subnet'] %>  netmask <%= node['pxe_dust']['dhcpd_subnet'] %> {  #network
+ range <%= node['pxe_dust']['dhcpd_range'] %>; # Range
+ option domain-name-servers <%= node['pxe_dust']['dhcpd_dns'] %>; #Pri DNS , Sec DNS
+ option domain-name "<%= node['pxe_dust']['dhcpd_domain'] %>"; #Domain name
+ option routers <%= node['pxe_dust']['dhcpd_gateway'] %>; #Gateway
+ option broadcast-address <%= node['pxe_dust']['dhcpd_broadcast'] %>; #Broadcast
+ default-lease-time <%= node['pxe_dust']['dhcpd_lease_time'] %>;
+ max-lease-time <%= node['pxe_dust']['dhcpd_max_lease_time'] %>;
+ filename "pxelinux.0";
+}
+
+group {
+  next-server <%= node['pxe_dust']['dhcpd_next_server'] %>;                # our tftp server
+  host tftpclient {
+    filename "pxelinux.0";
+  }
+}

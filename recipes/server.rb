@@ -150,5 +150,7 @@ end
 
 #generate local mirror of installers
 include_recipe "pxe_dust::installers"
+# run dhcpd setup
+include_recipe "pxe_dust::dhcpd"
 #generate local mirror install.sh and bootstrap templates
 include_recipe "pxe_dust::bootstrap_template"
