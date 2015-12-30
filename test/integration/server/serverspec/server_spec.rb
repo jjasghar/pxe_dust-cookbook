@@ -18,6 +18,10 @@ describe 'pxe_dust::server' do
     it { should be_running }
   end
 
+  describe process('isc-dhcp-server') do
+    its(:user) { should eq 'root' }
+    it { should be_running }
+  end
 
   describe process('apache2') do
     its(:user) { should eq 'root' }
@@ -33,6 +37,15 @@ describe 'pxe_dust::server' do
     it { should be_directory }
   end
 
+  describe file('/etc/dhcp/') do
+    it { should exist }
+    it { should be_directory }
+  end
+
+  describe file('/etc/dhcp/dhcpd.conf') do
+    it { should exist }
+  end
+
   describe file('/var/www/pxe_dust/isos') do
     it { should exist }
     it { should be_directory }
@@ -46,8 +59,4 @@ describe 'pxe_dust::server' do
     it { should exist }
     its(:content) { should match /DocumentRoot \/var\/www\/pxe_dust/ }
   end
-
-
-
-
 end

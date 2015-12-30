@@ -22,27 +22,51 @@ platforms:
   - recipe[apt]
 
 suites:
-- name: common
+- name: minitest_common
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::common]
 
-- name: server
+- name: common
+  run_list:
+  - recipe[pxe_dust::common]
+
+- name: minitest_server
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::server]
-  data_bags_path: "examples/"
+  data_bags_path: "examples"
   attributes:
     pxe_dust:
       default:
         domain: "testing.pxe"
 
-- name: installers
+- name: server
+  run_list:
+  - recipe[pxe_dust::server]
+  data_bags_path: "examples"
+  attributes:
+    pxe_dust:
+      default:
+        domain: "testing.pxe"
+    pxe_dust:
+     default:
+       dhcpd_inteface: "eth0"
+
+- name: minitest_installers
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::installers]
 
-- name: bootstrap_template
+- name: installers
+  run_list:
+  - recipe[pxe_dust::installers]
+
+- name: minitent_bootstrap_template
   run_list:
   - recipe[minitest-handler]
   - recipe[pxe_dust_test::bootstrap_template]
+
+- name: bootstrap_template
+  run_list:
+  - recipe[pxe_dust::bootstrap_template]

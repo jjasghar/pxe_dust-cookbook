@@ -18,7 +18,7 @@ describe 'pxe_dust::common' do
     it { should be_directory }
   end
 
-  describe file('/var/www/pxe_dust/iso') do
+  describe file('/var/www/pxe_dust/isos') do
     it { should exist }
     it { should be_directory }
   end
