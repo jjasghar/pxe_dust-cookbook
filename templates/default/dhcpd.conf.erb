@@ -10,7 +10,7 @@ log-facility local7;
 
 allow booting;
 
-subnet <%= node['pxe_dust']['dhcpd_subnet'] %>  netmask <%= node['pxe_dust']['dhcpd_subnet'] %> {  #network
+subnet <%= node['pxe_dust']['dhcpd_subnet'] %>  netmask <%= node['pxe_dust']['dhcpd_netmask'] %> {  #network
  range <%= node['pxe_dust']['dhcpd_range'] %>; # Range
  option domain-name-servers <%= node['pxe_dust']['dhcpd_dns'] %>; #Pri DNS , Sec DNS
  option domain-name "<%= node['pxe_dust']['dhcpd_domain'] %>"; #Domain name
