@@ -36,8 +36,8 @@ d-i partman/default_filesystem string ext4
 
 ### Boot loader installation
 d-i grub-installer/only_debian boolean true
-d-i grub-installer/with_other_os boolean true
 d-i debian-installer/splash	boolean false
+d-i grub-installer/bootdev string /dev/sda
 
 ## Package installation
 d-i base-installer/kernel/override-image string linux-server
