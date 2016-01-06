@@ -1,9 +1,8 @@
-# Author:: Matt Ray <matt@chef.io>
 # Author:: JJ Asghar <jj@chef.io>
 # Cookbook Name:: pxe_dust
-# Recipe:: common
+# Recipe:: dhcpd
 #
-# Copyright 2013-2016 Chef Software, Inc
+# Copyright 2016 Chef Software, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,27 +17,26 @@
 # limitations under the License.
 #
 
-include_recipe 'apache2'
-
-directory node['pxe_dust']['dir'] do
-  mode 0755
+package 'isc-dhcp-server' do
+  action :install
 end
 
-directory "#{node['pxe_dust']['dir']}/isos" do
-  mode 0755
-end
-
-template "/etc/apache2/sites-available/pxe_dust.conf" do
-  source "pxe_dust.conf.erb"
+template "/etc/default/isc-default-server" do
+  source "isc-default-server.erb"
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, 'service[apache2]', :delayed
 end
 
-apache_site 'pxe_dust.conf'
+template "/etc/dhcp/dhcpd.conf" do
+  source "dhcpd.conf.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+  notifies :restart, 'service[isc-dhcp-server]', :delayed
+end
 
-service "apache2" do
+service "isc-dhcp-server" do
   supports :status => true, :restart => true, :truereload => true
   action [ :enable, :start ]
 end

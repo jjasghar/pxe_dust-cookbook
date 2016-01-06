@@ -138,7 +138,7 @@ template "#{node['tftp']['directory']}/pxelinux.cfg/default"  do
   source 'pxelinux.cfg.erb'
   mode '0644'
   variables(
-    :platform => default['platform'] || '12.04',
+    :platform => default['platform'] || '14.04',
     :id => 'default',
     :interface => default['interface'] || 'auto',
     :arch => default['arch'] || 'amd64',
@@ -150,5 +150,7 @@ end
 
 #generate local mirror of installers
 include_recipe "pxe_dust::installers"
+# run dhcpd setup
+include_recipe "pxe_dust::dhcpd"
 #generate local mirror install.sh and bootstrap templates
 include_recipe "pxe_dust::bootstrap_template"
