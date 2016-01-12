@@ -1,0 +1,67 @@
+---
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: latest
+
+platforms:
+- name: ubuntu-12-04-x64
+  driver:
+    name: digitalocean
+  run_list:
+  - recipe[apt]
+
+- name: ubuntu-14-04-x64
+  driver:
+    name: digitalocean
+  run_list:
+  - recipe[apt]
+
+suites:
+- name: minitest_common
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::common]
+
+- name: common
+  run_list:
+  - recipe[pxe_dust::common]
+
+- name: minitest_server
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::server]
+  data_bags_path: "examples"
+  attributes:
+    pxe_dust:
+      default:
+        domain: "testing.pxe"
+
+- name: server
+  run_list:
+  - recipe[pxe_dust::server]
+  data_bags_path: "examples"
+  attributes:
+    pxe_dust:
+      default:
+        domain: "testing.pxe"
+    pxe_dust:
+     default:
+       dhcpd_inteface: "eth0"
+
+- name: minitest_installers
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::installers]
+
+- name: installers
+  run_list:
+  - recipe[pxe_dust::installers]
+
+- name: minitent_bootstrap_template
+  run_list:
+  - recipe[minitest-handler]
+  - recipe[pxe_dust_test::bootstrap_template]
+
+- name: bootstrap_template
+  run_list:
+  - recipe[pxe_dust::bootstrap_template]
