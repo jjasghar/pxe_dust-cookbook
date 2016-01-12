@@ -22,9 +22,9 @@ require 'mixlib/shellout'
 include_recipe 'pxe_dust::common'
 include_recipe 'pxe_dust::installers'
 
-#write out a new pxedust.erb template
+# write out a new pxedust.erb template
 remote_file "#{node['pxe_dust']['dir']}/chef-full.erb" do
-  source "https://raw.github.com/chef/chef/master/lib/chef/knife/bootstrap/chef-full.erb"
+  source "https://raw.githubusercontent.com/chef/chef/master/lib/chef/knife/bootstrap/templates/chef-full.erb"
 end
 
 # change URL from
@@ -48,7 +48,7 @@ ruby_block "template url" do
   subscribes :create, resources("remote_file[#{node['pxe_dust']['dir']}/chef-full.erb]")
 end
 
-#write out a new install.sh
+# write out a new install.sh
 remote_file "#{node['pxe_dust']['dir']}/original-install.sh" do
   source "https://chef.io/chef/install.sh"
 end
@@ -74,7 +74,7 @@ ruby_block "install.sh url" do
   subscribes :create, resources("remote_file[#{node['pxe_dust']['dir']}/original-install.sh]")
 end
 
-#straighten up symlinks for downloading from install.sh
+# straighten up symlinks for downloading from install.sh
 ruby_block "create symlinks that match up with the urls" do
   block do
     Dir.glob("#{node['pxe_dust']['dir']}/chef-full-stack/*").each do |distro|
@@ -85,7 +85,7 @@ ruby_block "create symlinks that match up with the urls" do
         versions.uniq.each do |version|
           vpackages = Dir.glob("#{distro}/chef_#{version}-*").sort
           vpackages.each do |filename|
-            if !File.symlink?(filename)
+            unless File.symlink?(filename)
               lname = "#{distro}/chef_#{version}_#{filename.split('_').last}"
               ln = "ln -sf #{filename} #{lname}"
               Chef::Log.debug ln

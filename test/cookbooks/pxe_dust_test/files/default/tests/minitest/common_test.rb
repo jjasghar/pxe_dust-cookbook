@@ -19,14 +19,14 @@
 
 require File.expand_path('../support/helpers', __FILE__)
 
-describe "pxe_dust_test::common" do
+describe 'pxe_dust_test::common' do
   include Helpers::PxeDustTest
 
   it 'runs the apache and tftpd-hpa services' do
-    service("apache2").must_be_running
+    service('apache2').must_be_running
   end
 
   it 'creates the pxe_dust directory' do
-    directory(node['pxe_dust']['dir']).must_exist.with(:owner, "root")
+    directory(node['pxe_dust']['dir']).must_exist.with(:owner, 'root')
   end
 end

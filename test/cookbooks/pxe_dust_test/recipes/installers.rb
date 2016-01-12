@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::installers"
+include_recipe 'pxe_dust::installers'

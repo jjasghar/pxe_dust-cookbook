@@ -19,20 +19,19 @@
 
 require File.expand_path('../support/helpers', __FILE__)
 
-describe "pxe_dust_test::server" do
+describe 'pxe_dust_test::server' do
   include Helpers::PxeDustTest
 
-  it 'runs the apache and tftpd-hpa services' do
-    service("in.tftpd").must_be_running
+  it 'runs the apache services' do
+    service('apache2').must_be_running
   end
 
   it 'creates the tftp and pxe_dust directories' do
-    directory(node['tftp']['directory']).must_exist.with(:owner, "root")
-    directory("#{node['tftp']['directory']}/pxelinux.cfg").must_exist.with(:owner, "root")
+    directory(node['tftp']['directory']).must_exist.with(:owner, 'root')
+    directory("#{node['tftp']['directory']}/pxelinux.cfg").must_exist.with(:owner, 'root')
   end
 
   it 'creates a default pxelinux.cfg' do
     file("#{node['tftp']['directory']}/pxelinux.cfg/default").must_include node['pxe_dust']['default']['domain']
   end
-
 end

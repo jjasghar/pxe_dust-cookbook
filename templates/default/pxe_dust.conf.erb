@@ -1,0 +1,28 @@
+<VirtualHost *:80>
+  ServerName <%= node['pxe_dust']['server_name'] %>
+  ServerAlias <%= node['pxe_dust']['server_aliases'] %>
+  DocumentRoot <%= node['pxe_dust']['docroot'] %>
+
+  <Directory <%= node['pxe_dust']['docroot'] %>>
+    Options <%= node['pxe_dust']['directory_options'] %>
+    AllowOverride None
+    Require all granted
+  </Directory>
+
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+
+  <Location /server-status>
+    SetHandler server-status
+
+    Require local
+
+  </Location>
+
+  LogLevel info rewrite:trace1
+
+  ErrorLog /var/log/apache2/pxe_dust-error.log
+  CustomLog /var/log/apache2/pxe_dust-access.log combined
+</VirtualHost>
