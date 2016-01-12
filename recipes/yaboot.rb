@@ -19,12 +19,12 @@
 
 include_recipe 'pxe_dust::server'
 
-#search for any apt-cacher-ng caching proxies
+# search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
   proxy = '#d-i mirror/http/proxy string url'
 else
-  query = "apt_caching_server:true"
+  query = 'apt_caching_server:true'
   query += " AND chef_environment:#{node.chef_environment}" if node['apt']['cacher-client']['restrict_environment']
   Chef::Log.debug("pxe_dust::server searching for '#{query}'")
   servers = search(:node, query) || []
@@ -53,92 +53,88 @@ pxe_dust.each do |id|
   arch = image['arch']
   version = image['version']
 
-  if arch.eql?('ppc') #skip it otherwise
-    if image['user']
-      user_fullname = image['user']['fullname']
-      user_username = image['user']['username']
-      user_crypted_password = image['user']['crypted_password']
-    end
-    if image['root']
-      root_crypted_password = image['root']['crypted_password']
-    end
+  next unless arch.eql?('ppc')
+  if image['user']
+    user_fullname = image['user']['fullname']
+    user_username = image['user']['username']
+    user_crypted_password = image['user']['crypted_password']
+  end
+  root_crypted_password = image['root']['crypted_password'] if image['root']
 
-    #local mirror for ppc mini ISO
-    remote_file "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso" do
-      source image['netboot_url']
-      action :create_if_missing
-    end
+  # local mirror for ppc mini ISO
+  remote_file "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso" do
+    source image['netboot_url']
+    action :create_if_missing
+  end
 
-    # target dir
-    directory "#{image_dir}/iso" do
-      mode 0755
-      recursive true
-    end
+  # target dir
+  directory "#{image_dir}/iso" do
+    mode 0755
+    recursive true
+  end
 
-    # mount iso at target
-    mount "mount the iso"  do
-      mount_point "#{image_dir}/iso"
-      device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
-      options 'loop'
-      action :mount
-    end
+  # mount iso at target
+  mount 'mount the iso'  do
+    mount_point "#{image_dir}/iso"
+    device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
+    options 'loop'
+    action :mount
+  end
 
-    # populate the target with iso/install contents
-    ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
-      execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/#{ifile}" do
-        not_if { File.exists?("#{image_dir}/#{ifile}") }
-      end
+  # populate the target with iso/install contents
+  ['boot.msg', 'netboot-initrd.gz', 'netboot-linux'].each do |ifile|
+    execute "cp #{image_dir}/iso/install/#{ifile} #{image_dir}/#{ifile}" do
+      not_if { File.exist?("#{image_dir}/#{ifile}") }
     end
+  end
 
-    # get the yaboot
-    execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/yaboot" do
-      not_if { File.exists?("#{node['tftp']['directory']}/yaboot") }
-    end
+  # get the yaboot
+  execute "cp #{image_dir}/iso/install/yaboot #{node['tftp']['directory']}/yaboot" do
+    not_if { File.exist?("#{node['tftp']['directory']}/yaboot") }
+  end
 
-    # umount iso
-    mount "umount the iso"  do
-      mount_point "#{image_dir}/iso"
-      device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
-      action :umount
-    end
+  # umount iso
+  mount 'umount the iso' do
+    mount_point "#{image_dir}/iso"
+    device "#{node['pxe_dust']['dir']}/isos/#{platform}-#{version}-#{arch}-mini.iso"
+    action :umount
+  end
 
-    # template the yaboot.conf
-    if image['addresses']
-      image['addresses'].keys.each do |mac_address|
-        mac = mac_address.gsub(/:/, '-')
-        mac.downcase!
-        template "#{node['tftp']['directory']}/yaboot.conf" do
-          source 'yaboot.conf.erb'
-          mode 0644
-          variables(
-            :interface => image['interface'] || 'eth0',
-            :id => id,
-            :domain => image['domain'],
-            :hostname => image['addresses'][mac_address],
-            :preseed => image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
-            )
-        end
-      end
-    end
-
-    # preseed
-    template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
-      only_if { image['external_preseed'].nil? }
-      source "#{platform}-preseed.cfg.erb"
-      mode 0644
-      variables(
-        :id => id,
-        :proxy => proxy,
-        :boot_volume_size => image['boot_volume_size'] || '30GB',
-        :packages => image['packages'] || '',
-        :user_fullname => user_fullname,
-        :user_username => user_username,
-        :user_crypted_password => user_crypted_password,
-        :root_crypted_password => root_crypted_password,
-        :halt => image['halt'] || false,
-        :bootstrap => image['chef'] || true
+  # template the yaboot.conf
+  if image['addresses']
+    image['addresses'].keys.each do |mac_address|
+      mac = mac_address.gsub(/:/, '-')
+      mac.downcase!
+      template "#{node['tftp']['directory']}/yaboot.conf" do
+        source 'yaboot.conf.erb'
+        mode 0644
+        variables(
+          interface: image['interface'] || 'eth0',
+          id: id,
+          domain: image['domain'],
+          hostname: image['addresses'][mac_address],
+          preseed: image['external_preseed'].nil? ? "#{id}-preseed.cfg" : image['external_preseed']
         )
+      end
     end
+  end
 
+  # preseed
+  template "#{node['pxe_dust']['dir']}/#{id}-preseed.cfg" do
+    only_if { image['external_preseed'].nil? }
+    source "#{platform}-preseed.cfg.erb"
+    mode 0644
+    variables(
+      id: id,
+      proxy: proxy,
+      boot_volume_size: image['boot_volume_size'] || '30GB',
+      packages: image['packages'] || '',
+      user_fullname: user_fullname,
+      user_username: user_username,
+      user_crypted_password: user_crypted_password,
+      root_crypted_password: root_crypted_password,
+      halt: image['halt'] || false,
+      bootstrap: image['chef'] || true
+    )
   end
 end

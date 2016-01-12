@@ -19,11 +19,10 @@
 
 require File.expand_path('../support/helpers', __FILE__)
 
-describe "pxe_dust_test::bootstrap_template" do
+describe 'pxe_dust_test::bootstrap_template' do
   include Helpers::PxeDustTest
   it 'creates the chef-full.erb and original-install.sh' do
     file("#{node['pxe_dust']['dir']}/chef-full.erb").must_exist
     file("#{node['pxe_dust']['dir']}/original-install.sh").must_exist
   end
-
 end

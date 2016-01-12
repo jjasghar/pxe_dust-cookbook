@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::bootstrap_template"
+include_recipe 'pxe_dust::bootstrap_template'

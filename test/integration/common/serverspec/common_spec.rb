@@ -25,10 +25,6 @@ describe 'pxe_dust::common' do
 
   describe file('/etc/apache2/sites-available/pxe_dust.conf') do
     it { should exist }
-    its(:content) { should match /DocumentRoot \/var\/www\/pxe_dust/ }
+    its(:content) { should match %r{DocumentRoot \/var\/www\/pxe_dust} }
   end
-
-
-
-
 end

@@ -21,22 +21,22 @@ package 'isc-dhcp-server' do
   action :install
 end
 
-template "/etc/default/isc-default-server" do
-  source "isc-default-server.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+template '/etc/default/isc-default-server' do
+  source 'isc-default-server.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
 end
 
-template "/etc/dhcp/dhcpd.conf" do
-  source "dhcpd.conf.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+template '/etc/dhcp/dhcpd.conf' do
+  source 'dhcpd.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
   notifies :restart, 'service[isc-dhcp-server]', :delayed
 end
 
-service "isc-dhcp-server" do
-  supports :status => true, :restart => true, :truereload => true
-  action [ :enable, :start ]
+service 'isc-dhcp-server' do
+  supports status: true, restart: true, truereload: true
+  action [:enable, :start]
 end

@@ -21,12 +21,12 @@ require 'net/http'
 
 include_recipe 'pxe_dust::common'
 
-#location of the full stack installers
+# location of the full stack installers
 directory "#{node['pxe_dust']['dir']}/chef-full-stack" do
   mode '0755'
 end
 
-#loop over the other data bag items here
+# loop over the other data bag items here
 begin
   default = node['pxe_dust']['default']
   pxe_dust = data_bag('pxe_dust')
@@ -85,7 +85,7 @@ pxe_dust.each do |id|
     # must install by hand currently chef_11.6.0-1.ubuntu.12.04_amd64.deb
     installer = "chef_#{node['pxe_dust']['chefversion']}-0.#{platform}.#{version}_#{rel_arch}.deb"
   else
-    #for getting latest version of full stack installers
+    # for getting latest version of full stack installers
     Net::HTTP.start('www.chef.io') do |http|
       Chef::Log.debug("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
       response = http.get("/chef/download?v=#{node['pxe_dust']['chefversion']}&p=#{platform}&pv=#{version}&m=#{rel_arch}")
@@ -96,7 +96,7 @@ pxe_dust.each do |id|
       Chef::Log.debug("Omnitruck installer: #{installer}")
     end
 
-    #download the full stack installer
+    # download the full stack installer
     remote_file "#{node['pxe_dust']['dir']}/chef-full-stack/#{release}/#{installer}" do
       source location
       mode 0644
@@ -105,25 +105,24 @@ pxe_dust.each do |id|
 
   end
 
-  run_list = (image['run_list'] || '').split(',') #for supporting multiple items
+  run_list = (image['run_list'] || '').split(',') # for supporting multiple items
 
-  #Chef bootstrap script run by new installs
+  # Chef bootstrap script run by new installs
   template "#{node['pxe_dust']['dir']}/#{id}-chef-bootstrap" do
     source 'chef-bootstrap.sh.erb'
     mode 0644
     variables(
-      :release => release,
-      :installer => installer,
-      :interface => image['interface'] || 'eth0',
-      :http_proxy => http_proxy,
-      :http_proxy_user => http_proxy_user,
-      :http_proxy_pass => http_proxy_pass,
-      :https_proxy => https_proxy,
-      :environment => image['environment'],
-      :run_list => run_list
-      )
+      release: release,
+      installer: installer,
+      interface: image['interface'] || 'eth0',
+      http_proxy: http_proxy,
+      http_proxy_user: http_proxy_user,
+      http_proxy_pass: http_proxy_pass,
+      https_proxy: https_proxy,
+      environment: image['environment'],
+      run_list: run_list
+    )
   end
-
 end
 
 # Converting from a link because it's unreadable from apache

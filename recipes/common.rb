@@ -28,17 +28,17 @@ directory "#{node['pxe_dust']['dir']}/isos" do
   mode 0755
 end
 
-template "/etc/apache2/sites-available/pxe_dust.conf" do
-  source "pxe_dust.conf.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+template '/etc/apache2/sites-available/pxe_dust.conf' do
+  source 'pxe_dust.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
   notifies :restart, 'service[apache2]', :delayed
 end
 
 apache_site 'pxe_dust.conf'
 
-service "apache2" do
-  supports :status => true, :restart => true, :truereload => true
-  action [ :enable, :start ]
+service 'apache2' do
+  supports status: true, restart: true, truereload: true
+  action [:enable, :start]
 end

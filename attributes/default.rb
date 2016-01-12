@@ -24,8 +24,8 @@ default['pxe_dust']['default'] = {}
 
 default['pxe_dust']['server_name'] = node['hostname']
 default['pxe_dust']['server_aliases'] = node['fqdn']
-default['pxe_dust']['directory_options'] =  'Indexes FollowSymLinks'
-default['pxe_dust']['docroot'] =  node['pxe_dust']['dir']
+default['pxe_dust']['directory_options'] = 'Indexes FollowSymLinks'
+default['pxe_dust']['docroot'] = node['pxe_dust']['dir']
 
 default['pxe_dust']['dhcpd_interface'] = 'eth1'
 default['pxe_dust']['dhcpd_subnet'] = '192.168.10.0'

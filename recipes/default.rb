@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "pxe_dust::server"
+include_recipe 'pxe_dust::server'
