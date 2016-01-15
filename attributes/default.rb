@@ -38,3 +38,5 @@ default['pxe_dust']['dhcpd_broadcast'] = '192.168.10.255'
 default['pxe_dust']['dhcpd_lease_time'] = '600'
 default['pxe_dust']['dhcpd_max_lease_time'] = '7200'
 default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'
+
+default['pxe_dust']['centos7']['mirror'] = 'http://yum.tamu.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso'

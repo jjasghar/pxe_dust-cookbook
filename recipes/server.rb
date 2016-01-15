@@ -20,6 +20,10 @@
 include_recipe 'tftp::server'
 include_recipe 'pxe_dust::common'
 
+package 'syslinux' do
+  action :install
+end
+
 # search for any apt-cacher-ng caching proxies
 if Chef::Config[:solo]
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
@@ -38,6 +42,14 @@ end
 
 directory "#{node['tftp']['directory']}/pxelinux.cfg" do
   mode 0755
+end
+
+file "#{node['tftp']['directory']}/vesamenu.c32" do
+  owner 'root'
+  group 'root'
+  mode 0755
+  content ::File.open("/usr/lib/syslinux/vesamenu.c32").read
+  action :create
 end
 
 # loop over the other data bag items here
