@@ -42,3 +42,5 @@ default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'
 
 default['pxe_dust']['esxi_iso'] = 'VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso'
 default['pxe_dust']['esxi_rootpasswd'] = 'Ubuntu!!'
+
+default['pxe_dust']['centos7']['mirror'] = 'http://yum.tamu.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso'

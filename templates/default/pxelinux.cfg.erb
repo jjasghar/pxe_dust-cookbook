@@ -22,3 +22,10 @@ MENU LABEL ^3) ESXi (64-bit)
 KERNEL esxi/mboot.c32
 APPEND -c esxi/boot.cfg ks=http://<%= node['ipaddress'] %>/esxi-ks.cfg
 <% end %>
+
+<% if node.run_list.include?('recipe[pxe_dust::centos7]') %>
+LABEL 3
+MENU LABEL ^3) CentOS 7.0 (64-bit)
+KERNEL <% node['tftp']['directory'] %>/centos7/vmlinuz
+APPEND method=nfs:<% node['ipaddress'] %>:/srv/install/centos7/ lang=us keymap=us ip=dhcp ksdevice=auto noipv6 initrd=<% node['tftp']['directory'] %>/centos7/initrd.img ks=http://<%= node['ipaddress'] %>/centos7-ks.cfg
+<% end %>
