@@ -19,6 +19,6 @@ IPAPPEND 2
 <% if node.run_list.include?('recipe[pxe_dust::esxi]') %>
 LABEL 3
 MENU LABEL ^3) ESXi (64-bit)
-KERNEL <%= node['tftp']['directory'] %>/esxi/mboot.c32
-APPEND -c  <%= node['tftp']['directory'] %>/esxi/boot.cfg ks=http://<%= node['ipaddress'] %>/esxi-ks.cfg
+KERNEL esxi/mboot.c32
+APPEND -c esxi/boot.cfg ks=http://<%= node['ipaddress'] %>/esxi-ks.cfg
 <% end %>

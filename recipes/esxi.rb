@@ -57,3 +57,10 @@ template "#{node['pxe_dust']['dir']}/esxi-ks.cfg" do
   group "root"
   mode "0644"
 end
+
+template "#{node['pxe_dust']['dir']}/esxi/boot.cfg" do
+  source "esxi-boot.cfg.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+end
