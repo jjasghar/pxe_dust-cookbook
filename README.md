@@ -1,11 +1,12 @@
 Description
 ===========
 
-This cookbook handles local bootstrapping and PXE booting life cycle with 3 recipes:
+This cookbook handles local bootstrapping and PXE booting life cycle:
 
 * **server**: Configures a tftpd server for serving Ubuntu and Debian installers over PXE.
 * **installers**: Downloads the Chef full stack installers and writes out Chef bootstraps.
 * **bootstrap_template**: Builds a template for use with `knife` to take advantage of the locally mirrored content.
+* **esxi**: Bootstraps ESXi via PXE.
 
 Requirements
 ============
@@ -18,6 +19,9 @@ Please refer to the [TESTING file](TESTING.md) to see the currently (and passing
 * Ubuntu 12.04
 * Ubuntu 14.04
 * Debian 6.0-7.1 (have with manual testing)
+* VMware-VMvisor-Installer-5.0.0.update03
+* VMware-VMvisor-Installer-201501001
+* VMware-VMvisor-Installer-6.0.0.update01
 
 ## Cookbooks:
 

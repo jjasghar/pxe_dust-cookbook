@@ -1,7 +1,7 @@
 # coding: utf-8
 # Author:: JJ Asghar <jj@chef.io>
 # Cookbook Name:: pxe_dust
-# Recipe:: rhel
+# Recipe:: esxi
 #
 # Copyright 2016 Chef Software, Inc
 #
@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+include_recipe 'pxe_dust::server'
 
 esxi = "/tmp/#{node[pxe_dust][esxi_iso]}"
 
