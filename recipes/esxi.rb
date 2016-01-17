@@ -41,7 +41,7 @@ end
 bash "mount and copy off files" do
   user "root"
   cwd "/tmp"
-  creates "maybe"
+  creates "/var/lib/tftpboot/esxi/a.b00"
   code <<-EOH
     STATUS=0
     mount -o loop -t iso9660 #{esxi} /mnt/loop || STATUS=1
@@ -58,7 +58,7 @@ template "#{node['pxe_dust']['dir']}/esxi-ks.cfg" do
   mode "0644"
 end
 
-template "#{node['pxe_dust']['dir']}/esxi/boot.cfg" do
+template "#{node['tftp']['directory']}/esxi/boot.cfg" do
   source "esxi-boot.cfg.erb"
   owner "root"
   group "root"
