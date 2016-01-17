@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-esxi = '/tmp/VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso'
+esxi = "/tmp/#{node[pxe_dust][esxi_iso]}"
 
 directory "/mnt/loop" do
   owner "root"
