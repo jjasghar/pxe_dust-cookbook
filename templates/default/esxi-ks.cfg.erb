@@ -1,0 +1,12 @@
+# Accept the VMware End User License Agreement
+vmaccepteula
+# Set the root password for the DCUI and Tech Support Mode
+rootpw ubuntu
+# Set the keyboard type
+keyboard 'US'
+# Install on the first local disk available on machine
+install --firstdisk --overwritevmfs
+# Configure a static IP Address on the first network adapter
+network --bootproto=static --device=vmnic0 --ip=192.168.10.100 --gateway=192.168.10.1 --netmask=255.255.255.0 --nameserver="192.168.1.1,8.8.8.8" --hostname=esxiserver01
+#Reboot after installation complete
+reboot
