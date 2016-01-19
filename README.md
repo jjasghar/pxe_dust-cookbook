@@ -139,6 +139,8 @@ that defaults to: `VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso` t
 you may need to override. If you put that ISO in the `/tmp` directory of the machine
 that will do the hosting of the tftp the recipe will take care of the rest.
 
+The root password is `Ubuntu!!` due to the ESXi security restrictions.
+
 This recipe has been tested from ESXi `5.0`,`5.5`,`6.0 update 1`.
 
 ## bootstrap_template
