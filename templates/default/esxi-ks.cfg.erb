@@ -3,7 +3,7 @@ vmaccepteula
 # Configure a static IP Address on the first network adapter
 network --bootproto=dhcp --device=vmnic0
 # Set the root password for the DCUI and Tech Support Mode
-rootpw Ubuntu!!
+rootpw <%= node['pxe_dust']['esxi_rootpasswd'] %>
 clearpart --firstdisk --overwritevmfs
 install --firstdisk --overwritevmfs
 #Reboot after installation complete

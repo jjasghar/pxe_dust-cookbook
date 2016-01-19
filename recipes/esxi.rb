@@ -22,7 +22,7 @@ include_recipe 'pxe_dust::server'
 
 esxi = "/tmp/#{node['pxe_dust']['esxi_iso']}"
 
-directory '/mnt/loop' do
+directory '/mnt/esxiloop' do
   owner 'root'
   group 'root'
   mode '0755'
@@ -46,9 +46,9 @@ bash 'mount and copy off files' do
   creates '/var/lib/tftpboot/esxi/a.b00'
   code <<-EOH
     STATUS=0
-    mount -o loop -t iso9660 #{esxi} /mnt/loop || STATUS=1
-    cp -R /mnt/loop/* #{node['tftp']['directory']}/esxi/ || STATUS=1
-    umount /mnt/loop || STATUS=1
+    mount -o loop -t iso9660 #{esxi} /mnt/esxiloop || STATUS=1
+    cp -R /mnt/esxiloop/* #{node['tftp']['directory']}/esxi/ || STATUS=1
+    umount /mnt/esxiloop || STATUS=1
     exit $STATUS
   EOH
 end
