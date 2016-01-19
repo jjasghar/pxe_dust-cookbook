@@ -22,17 +22,17 @@ include_recipe 'pxe_dust::server'
 
 esxi = "/tmp/#{node[pxe_dust][esxi_iso]}"
 
-directory "/mnt/loop" do
-  owner "root"
-  group "root"
-  mode "0755"
+directory '/mnt/loop' do
+  owner 'root'
+  group 'root'
+  mode '0755'
   action :create
 end
 
-directory "/srv/install/esxi" do
-  owner "root"
-  group "root"
-  mode "0755"
+directory '/srv/install/esxi' do
+  owner 'root'
+  group 'root'
+  mode '0755'
   action :create
 end
 
@@ -40,10 +40,10 @@ directory "#{node['tftp']['directory']}/esxi" do
   mode 0755
 end
 
-bash "mount and copy off files" do
-  user "root"
-  cwd "/tmp"
-  creates "/var/lib/tftpboot/esxi/a.b00"
+bash 'mount and copy off files' do
+  user 'root'
+  cwd '/tmp'
+  creates '/var/lib/tftpboot/esxi/a.b00'
   code <<-EOH
     STATUS=0
     mount -o loop -t iso9660 #{esxi} /mnt/loop || STATUS=1
@@ -54,15 +54,15 @@ bash "mount and copy off files" do
 end
 
 template "#{node['pxe_dust']['dir']}/esxi-ks.cfg" do
-  source "esxi-ks.cfg.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+  source 'esxi-ks.cfg.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
 end
 
 template "#{node['tftp']['directory']}/esxi/boot.cfg" do
-  source "esxi-boot.cfg.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+  source 'esxi-boot.cfg.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
 end
