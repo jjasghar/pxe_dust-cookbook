@@ -1,3 +1,8 @@
+## 2.2.0
+* Added ESXi pxe boot support
+* Updated the maintainer email
+* Updated the maintainer name
+
 ## 2.1.0
 
 * Added documentation for dhcp server and recipe

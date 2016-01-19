@@ -1,10 +1,24 @@
 prompt 0
-timeout 0
+timeout 300
 localboot 0
-default install
-label install
-	menu label Chef pxe_dust <%= @id %>
-	menu default
-	kernel <%= @id %>/<%= @platform %>-installer/<%= @arch %>/linux
-	append auto=true priority=critical interface=<%= @interface %> vga16fb.modeset=0 initrd=<%= @id %>/<%= @platform %>-installer/<%= @arch %>/initrd.gz netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us keyboard-configuration/xkb-keymap=us netcfg/get_hostname=<%= @hostname %> netcfg/get_domain=<%= @domain %> netcfg/chooseinterface=auto url=http://<%= node['ipaddress'] %>/<%= @preseed %> DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5
+default vesamenu.c32
+ONTIMEOUT 1
+
+menu title ########## Chef pxe_dust Boot Menu ##########
+
+label 1
+menu label ^1) Boot from local drive
+localboot 0
+
+label 2
+menu label ^2) pxe_dust <%= @id %>
+kernel <%= @id %>/<%= @platform %>-installer/<%= @arch %>/linux
+append auto=true priority=critical interface=<%= @interface %> vga16fb.modeset=0 initrd=<%= @id %>/<%= @platform %>-installer/<%= @arch %>/initrd.gz netcfg/disabledhcp=false locale=en_US console-setup/ask_detect=false console-setup/layoutcode=us keyboard-configuration/xkb-keymap=us netcfg/get_hostname=<%= @hostname %> netcfg/get_domain=<%= @domain %> netcfg/chooseinterface=auto url=http://<%= node['ipaddress'] %>/<%= @preseed %> DEBCONF_INTERFACE=noninteractive DEBCONF_DEBUG=5
 IPAPPEND 2
+
+<% if node.run_list.include?('recipe[pxe_dust::esxi]') %>
+LABEL 3
+MENU LABEL ^3) ESXi (64-bit)
+KERNEL esxi/mboot.c32
+APPEND -c esxi/boot.cfg ks=http://<%= node['ipaddress'] %>/esxi-ks.cfg
+<% end %>

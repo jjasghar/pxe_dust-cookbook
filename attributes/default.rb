@@ -39,3 +39,6 @@ default['pxe_dust']['dhcpd_broadcast'] = '192.168.10.255'
 default['pxe_dust']['dhcpd_lease_time'] = '600'
 default['pxe_dust']['dhcpd_max_lease_time'] = '7200'
 default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'
+
+default['pxe_dust']['esxi_iso'] = 'VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso'
+default['pxe_dust']['esxi_rootpasswd'] = 'Ubuntu!!'
