@@ -20,7 +20,7 @@
 
 include_recipe 'pxe_dust::server'
 
-esxi = "/tmp/#{node[pxe_dust][esxi_iso]}"
+esxi = "/tmp/#{node['pxe_dust']['esxi_iso']}"
 
 directory '/mnt/loop' do
   owner 'root'
