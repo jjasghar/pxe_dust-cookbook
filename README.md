@@ -163,6 +163,20 @@ Attributes
 `node['pxe_dust']['dir']` the location where apache will serve pxe_dust content, default is '/var/www/pxe_dust'
 `node['pxe_dust']['default']` attributes that may be used to override any settings provided by the `pxe_dust` data bag items
 
+`node['pxe_dust']['dhcpd_server']` defaults to `true` where this cookbook will set up a dhcp server for you.
+`node['pxe_dust']['dhcpd_interface']` defaults to `eth1` as the interface you want your dhcp server to listen on.
+`node['pxe_dust']['dhcpd_subnet']` defaults to `192.168.10.0` as the subnet that the leases will be.
+`node['pxe_dust']['dhcpd_netmask']` defaults to `255.255.255.0` as the netmask for the leases.
+`node['pxe_dust']['dhcpd_range']` defaults to `192.168.10.20 192.168.10.100` as the range of the leases.
+`node['pxe_dust']['dhcpd_dns']`  defaults to `192.168.1.1, 8.8.8.8` as your offered DNS servers.
+`node['pxe_dust']['dhcpd_domain']` defaults to an `example.com` domain.
+`node['pxe_dust']['dhcpd_gateway']` defaults to the `192.168.10.1` as your externally routed address.
+`node['pxe_dust']['dhcpd_broadcast']`  defaults to `192.168.10.255` as the broadcast address.
+`node['pxe_dust']['dhcpd_lease_time']` defaults to `600` as your minimum lease time.
+`node['pxe_dust']['dhcpd_max_lease_time']` defaults to `7200` as your max lease time.
+`node['pxe_dust']['dhcpd_next_server']` defaults to your tftp server `192.168.10.1`
+
+
 License and Author
 ==================
 
