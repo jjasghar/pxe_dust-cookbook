@@ -135,9 +135,12 @@ Downloads the full stack installers listed in the `pxe_dust` data bag and writes
 
 This recipe sets up PXE to help deploy ESXi from VMware. You need to acquire the
 ISO from VMWare before running this recipe. There is an attribute `default['pxe_dust']['esx_iso']`
-that defaults to: `VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso` that
-you may need to override. If you put that ISO in the `/tmp` directory of the machine
-that will do the hosting of the tftp the recipe will take care of the rest.
+that defaults to: `VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso` which at the time
+of creating this recipe was the most up-to-date. You may need to override this with
+a different version so keep that in mind. If you put that ISO in the `/tmp` directory
+on the tftp machine the recipe will take the ISO and extract what it needs and
+add the option to the PXE boot menu. You can start up the machine and select the
+3rd menu label and boot into installing ESXi on that host.
 
 The root password is `Ubuntu!!` due to the ESXi security restrictions.
 
