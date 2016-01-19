@@ -1,0 +1,34 @@
+# create new
+install
+# automatically proceed for each steps
+autostep
+# reboot after installing
+reboot
+# encrypt algorithm
+auth --enableshadow --passalgo=sha512
+# installation source
+url --url=http://<%= node['ipaddress'] %>/centos7/
+# install disk
+ignoredisk --only-use=sda
+# keyboard layouts
+keyboard --vckeymap=jp106 --xlayouts='jp','us'
+# system locale
+lang en_US.UTF-8
+# network settings
+network --bootproto=dhcp --ipv6=auto --activate --hostname=localhost
+# root password you generated above
+rootpw --iscrypted $6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWcLKTJZ3verMFnpFbITI9.eHwZ.HR1UPeKbCAV1
+# timezone
+timezone America/Chicago
+# bootloader's settings
+bootloader --location=mbr --boot-drive=sda
+# initialize all partition tables
+zerombr
+clearpart --all --initlabel
+# partitioning
+part /boot --fstype="xfs" --ondisk=sda --size=500
+logvol / --fstype="ext3" --size=20480 --name=root
+logvol swap --fstype="swap" --size=4096 --name=swap
+%packages
+@core
+%end
