@@ -1,3 +1,8 @@
+## 2.1.0
+
+* Added documentation for dhcp server and recipe
+* Added a way to turn off dhcp server with an override
+
 ## 2.0.0
 
 * Updated test-kitchen to use chef_zero
