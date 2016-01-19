@@ -182,8 +182,7 @@ you'll get a new menu item to bootstrap into ESXi, with a [kickstart](templates/
 - `node['pxe_dust']['dhcpd_lease_time']` defaults to `600` as your minimum lease time.
 - `node['pxe_dust']['dhcpd_max_lease_time']` defaults to `7200` as your max lease time.
 - `node['pxe_dust']['dhcpd_next_server']` defaults to your tftp server `192.168.10.1`
-
-`node['pxe_dust']['esxi_iso]` The name of the VMWare ESXi ISO that you'd like to install. The recipe expects it in `/tmp` of the machine that will host the tftp server.
+- `node['pxe_dust']['esxi_iso]` The name of the VMWare ESXi ISO that you'd like to install. The recipe expects it in `/tmp` of the machine that will host the tftp server.
 
 # License and Author
 
