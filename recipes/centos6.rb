@@ -1,6 +1,6 @@
 # Author:: JJ Asghar <jj@chef.io>
 # Cookbook Name:: pxe_dust
-# Recipe:: centos7
+# Recipe:: centos6
 #
 # Copyright 2016 Chef Software, Inc
 #
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-centos7 = Chef::Config[:file_cache_path] + '/CentOS-7-x86_64-Minimal-1511.iso'
+centos6 = Chef::Config[:file_cache_path] + '/CentOS-6.7-x86_64-minimal.iso'
 
 package 'nfs-kernel-server' do
   action :install
@@ -43,11 +43,11 @@ service "nfs-kernel-server" do
   action [ :enable, :start ]
 end
 
-remote_file centos7 do
+remote_file centos6 do
   owner "root"
   group "root"
   mode "0644"
-  source "#{node['pxe_dust']['centos7']['mirror']}"
+  source "#{node['pxe_dust']['centos6']['iso_mirror']}"
   action :create
 end
 
@@ -65,34 +65,34 @@ directory "/srv/install" do
   action :create
 end
 
-directory "/srv/install/centos7" do
+directory "/srv/install/centos6" do
   owner "root"
   group "root"
   mode "0755"
   action :create
 end
 
-directory "#{node['tftp']['directory']}/centos7" do
+directory "#{node['tftp']['directory']}/centos6" do
   mode 0755
 end
 
 bash "mount and copy off files" do
   user "root"
   cwd "/tmp"
-  creates "maybe"
+  creates "/srv/install/centos6/RPM-GPG-KEY-CentOS-Debug-6"
   code <<-EOH
     STATUS=0
-    mount -o loop -t iso9660 #{centos7} /mnt/centosloop || STATUS=1
-    cp /mnt/loop/images/pxeboot/vmlinuz #{node['tftp']['directory']}/centos7/  || STATUS=1
-    cp /mnt/loop/images/pxeboot/initrd.img #{node['tftp']['directory']}/centos7/  || STATUS=1
-    cp -R /mnt/centosloop/* /srv/install/centos7/ || STATUS=1
+    mount -o loop -t iso9660 #{centos6} /mnt/centosloop || STATUS=1
+    cp /mnt/centosloop/images/pxeboot/vmlinuz #{node['tftp']['directory']}/centos6/  || STATUS=1
+    cp /mnt/centosloop/images/pxeboot/initrd.img #{node['tftp']['directory']}/centos6/  || STATUS=1
+    cp -R /mnt/centosloop/* /srv/install/centos6/ || STATUS=1
     umount /mnt/centosloop || STATUS=1
     exit $STATUS
   EOH
 end
 
-template "#{node['pxe_dust']['dir']}/centos7-ks.cfg" do
-  source "centos7-ks.cfg.erb"
+template "#{node['pxe_dust']['dir']}/centos6-ks.cfg" do
+  source "centos6-ks.cfg.erb"
   owner "root"
   group "root"
   mode "0644"

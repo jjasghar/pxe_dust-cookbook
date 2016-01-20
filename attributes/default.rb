@@ -24,6 +24,7 @@ default['pxe_dust']['default'] = {}
 
 default['pxe_dust']['server_name'] = node['hostname']
 default['pxe_dust']['server_aliases'] = node['fqdn']
+default['pxe_dust']['internal_address'] = '192.168.10.1'
 default['pxe_dust']['directory_options'] = 'Indexes FollowSymLinks'
 default['pxe_dust']['docroot'] = node['pxe_dust']['dir']
 
@@ -38,9 +39,12 @@ default['pxe_dust']['dhcpd_gateway'] = '192.168.10.1'
 default['pxe_dust']['dhcpd_broadcast'] = '192.168.10.255'
 default['pxe_dust']['dhcpd_lease_time'] = '600'
 default['pxe_dust']['dhcpd_max_lease_time'] = '7200'
-default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'
+default['pxe_dust']['dhcpd_next_server'] = node['pxe_dust']['internal_address']
 
 default['pxe_dust']['esxi_iso'] = 'VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso'
 default['pxe_dust']['esxi_rootpasswd'] = 'Ubuntu!!'
 
+default['pxe_dust']['centos6']['local_install_mirror'] = node['pxe_dust']['internal_address']
+default['pxe_dust']['centos6']['local_directory_mirror'] = "/srv/install/centos6"
+default['pxe_dust']['centos6']['iso_mirror'] = 'http://mirrors.centos.webair.com/centos/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso'
 default['pxe_dust']['centos7']['mirror'] = 'http://yum.tamu.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso'

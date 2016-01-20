@@ -5,7 +5,10 @@ This cookbook handles local bootstrapping and PXE booting life cycle:
 * **server**: Configures a tftpd server for serving Ubuntu and Debian installers over PXE.
 * **installers**: Downloads the Chef full stack installers and writes out Chef bootstraps.
 * **bootstrap_template**: Builds a template for use with `knife` to take advantage of the locally mirrored content.
-* **esxi**: Bootstraps ESXi via PXE at tftp.
+* **esxi**: Bootstraps ESXi via PXE using tftp.
+* **centos6**: Bootstraps CentOS 6.7 via PXE using nfs.
+* **centos7**: Bootstraps CentOS 7.0 via PXE using nfs.
+
 
 # Requirements
 
@@ -20,6 +23,8 @@ Please refer to the [TESTING file](TESTING.md) to see the currently (and passing
 * VMware-VMvisor-Installer-5.0.0.update03
 * VMware-VMvisor-Installer-201501001
 * VMware-VMvisor-Installer-6.0.0.update01 (The [boot.cfg](templates/default/esxi-boot.cfg.erb) is for this one)
+* CentOS 6.7
+* CentOS 7.0
 
 ## Cookbooks:
 
@@ -109,6 +114,14 @@ This is a basic kickstart to bootstrap ESXi 6.0. It installs ESXi on the main ha
 
 This is the boot.cfg for ESXi 6.0 to work with the tftp setup with this cookbook.
 
+## centos6-ks.cfg.erb
+
+TODO
+
+## centos7-ks.cfg.erb
+
+TODO
+
 # Recipes
 
 ## default
@@ -145,6 +158,14 @@ add the option to the PXE boot menu. You can start up the machine and select the
 The root password is `Ubuntu!!` due to the ESXi security restrictions.
 
 This recipe has been tested from ESXi `5.0`,`5.5`,`6.0 update 1`.
+
+## centos6
+
+TODO
+
+## centos7
+
+TODO
 
 ## bootstrap_template
 

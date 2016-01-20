@@ -1,0 +1,39 @@
+# create new
+install
+# automatically proceed for each steps
+autostep
+# reboot after installing
+reboot
+# encrypt algorithm
+auth --enableshadow --passalgo=sha512
+# installation source
+install
+nfs --server=<%= node['pxe_dust']['centos6']['local_install_mirror'] %> --dir=<%= node['pxe_dust']['centos6']['local_directory_mirror'] %>
+# install disk
+ignoredisk --only-use=sda
+# keyboard layouts
+keyboard us
+# system locale
+lang en_US.UTF-8
+# network settings
+network --bootproto=dhcp --ipv6=auto --activate --hostname=localhost
+# root password you generated above
+rootpw --iscrypted $6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWcLKTJZ3verMFnpFbITI9.eHwZ.HR1UPeKbCAV1
+# timezone
+timezone America/Chicago
+# bootloader's settings
+bootloader --location=mbr
+# initialize all partition tables
+zerombr
+clearpart --all --initlabel --drives=sda
+part /boot --fstype ext3 --size=100 --ondisk=sda
+part pv.2 --size=0 --grow --ondisk=sda
+volgroup VolGroup00 --pesize=32768 pv.2
+logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=1024
+logvol / --fstype ext3 --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
+%packages
+@core
+%end
+%post
+wget --no-proxy -O /tmp/chef-bootstrap http://192.168.1.117/default-chef-bootstrap ; /bin/bash /tmp/chef-bootstrap
+%end

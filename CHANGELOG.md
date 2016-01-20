@@ -1,3 +1,7 @@
+## 2.3.0
+* Added CentOS 6.7 support
+* Added CentOS 7.0 support
+
 ## 2.2.0
 * Added ESXi pxe boot support
 * Updated the maintainer email
