@@ -1,3 +1,5 @@
+# text or graphical
+text
 # create new
 install
 # automatically proceed for each steps
@@ -22,17 +24,19 @@ rootpw --iscrypted $6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWc
 # timezone
 timezone America/Chicago
 # bootloader's settings
-bootloader --location=mbr
+bootloader --location=mbr --driveorder=<%= node['pxe_dust']['centos6']['main_drive'] %>
 # initialize all partition tables
 zerombr
-clearpart --all --initlabel --drives=sda
-part /boot --fstype ext3 --size=100 --ondisk=sda
-part pv.2 --size=0 --grow --ondisk=sda
-volgroup VolGroup00 --pesize=32768 pv.2
-logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=1024
-logvol / --fstype ext3 --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
+clearpart --all --initlabel
+part /boot --size=1024 --ondisk <%= node['pxe_dust']['centos6']['main_drive'] %>
+part pv.01 --size=1    --ondisk <%= node['pxe_dust']['centos6']['main_drive'] %> --grow
+volgroup vg1 pv.01
+logvol /    --vgname=vg1 --size=10000  --name=root
+logvol swap --vgname=vg1 --recommended --name=swap --fstype=swap
+ignoredisk --only-use=<%= node['pxe_dust']['centos6']['main_drive'] %>
 %packages
-@core
+@ base
+@ core
 %end
 %post
 wget --no-proxy -O /tmp/chef-bootstrap http://192.168.1.117/default-chef-bootstrap ; /bin/bash /tmp/chef-bootstrap

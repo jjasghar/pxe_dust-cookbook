@@ -45,6 +45,7 @@ default['pxe_dust']['esxi_iso'] = 'VMware-VMvisor-Installer-6.0.0.update01-30297
 default['pxe_dust']['esxi_rootpasswd'] = 'Ubuntu!!'
 
 default['pxe_dust']['centos6']['local_install_mirror'] = node['pxe_dust']['internal_address']
-default['pxe_dust']['centos6']['local_directory_mirror'] = "/srv/install/centos6"
+default['pxe_dust']['centos6']['local_directory_mirror'] = '/srv/install/centos6'
+default['pxe_dust']['centos6']['main_drive'] = 'sdb'
 default['pxe_dust']['centos6']['iso_mirror'] = 'http://mirrors.centos.webair.com/centos/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso'
 default['pxe_dust']['centos7']['mirror'] = 'http://yum.tamu.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso'
