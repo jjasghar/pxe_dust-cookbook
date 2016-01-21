@@ -39,5 +39,5 @@ ignoredisk --only-use=<%= node['pxe_dust']['centos6']['main_drive'] %>
 @ core
 %end
 %post
-wget --no-proxy -O /tmp/chef-bootstrap http://192.168.1.117/default-chef-bootstrap ; /bin/bash /tmp/chef-bootstrap
+wget --no-proxy -O /tmp/chef-bootstrap http://<%= node['ipaddress'] %>/default-chef-bootstrap ; /bin/bash /tmp/chef-bootstrap
 %end

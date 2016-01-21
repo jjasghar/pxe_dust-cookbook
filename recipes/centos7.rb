@@ -47,7 +47,7 @@ remote_file centos7 do
   owner "root"
   group "root"
   mode "0644"
-  source "#{node['pxe_dust']['centos7']['mirror']}"
+  source "#{node['pxe_dust']['centos7']['iso_mirror']}"
   action :create
 end
 
@@ -83,9 +83,12 @@ bash "mount and copy off files" do
   code <<-EOH
     STATUS=0
     mount -o loop -t iso9660 #{centos7} /mnt/centosloop || STATUS=1
-    cp /mnt/loop/images/pxeboot/vmlinuz #{node['tftp']['directory']}/centos7/  || STATUS=1
-    cp /mnt/loop/images/pxeboot/initrd.img #{node['tftp']['directory']}/centos7/  || STATUS=1
+    cp /mnt/centosloop/images/pxeboot/vmlinuz #{node['tftp']['directory']}/centos7/  || STATUS=1
+    cp /mnt/centosloop/images/pxeboot/upgrade.img #{node['tftp']['directory']}/centos7/  || STATUS=1
+    cp /mnt/centosloop/images/pxeboot/initrd.img #{node['tftp']['directory']}/centos7/  || STATUS=1
     cp -R /mnt/centosloop/* /srv/install/centos7/ || STATUS=1
+    mkdir /var/www/pxe_dust/centos7
+    cp -R /mnt/centosloop/* /var/www/pxe_dust/centos7/ || STATUS=1
     umount /mnt/centosloop || STATUS=1
     exit $STATUS
   EOH
