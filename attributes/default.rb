@@ -42,3 +42,12 @@ default['pxe_dust']['dhcpd_next_server'] = '192.168.10.1'
 
 default['pxe_dust']['esxi_iso'] = 'VMware-VMvisor-Installer-6.0.0.update01-3029758.x86_64.iso'
 default['pxe_dust']['esxi_rootpasswd'] = 'Ubuntu!!'
+
+default['pxe_dust']['syslinux_default_menu_path'] = value_for_platform(
+  ['ubuntu' ] => {
+    'default' => '/usr/lib/syslinux/vesamenu.c32'
+  },
+  ['debian'] => {
+    'default' => '/usr/lib/syslinux/modules/bios/vesamenu.c32'
+  }
+)

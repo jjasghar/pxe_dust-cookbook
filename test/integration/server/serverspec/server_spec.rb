@@ -8,6 +8,10 @@ describe 'pxe_dust::server' do
     it { should exist }
   end
 
+  describe file('/var/lib/tftpboot/vesamenu.c32') do
+    it { should exist }
+  end
+
   describe file('/var/lib/tftpboot/default') do
     it { should exist }
     it { should be_directory }

@@ -184,6 +184,7 @@ you'll get a new menu item to bootstrap into ESXi, with a [kickstart](templates/
 - `node['pxe_dust']['dhcpd_next_server']` defaults to your tftp server `192.168.10.1`
 - `node['pxe_dust']['esxi_iso]` The name of the VMWare ESXi ISO that you'd like to install. The recipe expects it in `/tmp` of the machine that will host the tftp server.
 - `node['pxe_dust']['esxi_rootpasswd']` defaults to `Ubuntu!!`, you can override it here.
+- `node['pxe_dust']['syslinux_default_menu_path']` defaults to path for vesamenu.c32 in syslinux package on Debian & Ubuntu. If you wish to use a different menu system, you can override it here.
 
 # License and Author
 

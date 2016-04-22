@@ -48,7 +48,7 @@ file "#{node['tftp']['directory']}/vesamenu.c32" do
   owner 'root'
   group 'root'
   mode 0755
-  content ::File.open('/usr/lib/syslinux/vesamenu.c32').read
+  content lazy { ::File.open(node['pxe_dust']['syslinux_default_menu_path']).read }
   action :create
 end
 
