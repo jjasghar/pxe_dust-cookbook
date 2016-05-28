@@ -1,0 +1,43 @@
+# text or graphical
+text
+# create new
+install
+# automatically proceed for each steps
+autostep
+# reboot after installing
+reboot
+# encrypt algorithm
+auth --enableshadow --passalgo=sha512
+# installation source
+install
+nfs --server=<%= node['pxe_dust']['centos6']['local_install_mirror'] %> --dir=<%= node['pxe_dust']['centos6']['local_directory_mirror'] %>
+# install disk
+ignoredisk --only-use=sda
+# keyboard layouts
+keyboard us
+# system locale
+lang en_US.UTF-8
+# network settings
+network --bootproto=dhcp --ipv6=auto --activate --hostname=localhost
+# root password you generated above
+rootpw --iscrypted $6$Trby4Y5R$bi90k7uYY5ImXe5MWGFW9kel2BnMCcYO9EnwngTFIXKG2/nWcLKTJZ3verMFnpFbITI9.eHwZ.HR1UPeKbCAV1
+# timezone
+timezone America/Chicago
+# bootloader's settings
+bootloader --location=mbr --driveorder=<%= node['pxe_dust']['centos6']['main_drive'] %>
+# initialize all partition tables
+zerombr
+clearpart --all --initlabel
+part /boot --size=1024 --ondisk <%= node['pxe_dust']['centos6']['main_drive'] %>
+part pv.01 --size=1    --ondisk <%= node['pxe_dust']['centos6']['main_drive'] %> --grow
+volgroup vg1 pv.01
+logvol /    --vgname=vg1 --size=10000  --name=root
+logvol swap --vgname=vg1 --recommended --name=swap --fstype=swap
+ignoredisk --only-use=<%= node['pxe_dust']['centos6']['main_drive'] %>
+%packages
+@ base
+@ core
+%end
+%post
+wget --no-proxy -O /tmp/chef-bootstrap http://<%= node['ipaddress'] %>/default-chef-bootstrap ; /bin/bash /tmp/chef-bootstrap
+%end
